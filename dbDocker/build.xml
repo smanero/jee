@@ -1,0 +1,55 @@
+<project basedir="." name="pcdm-db-doc" default="jar">
+
+	<property name="lib.dir" value="./lib" />
+	<property name="src.dir" value="./src" />
+	<property name="classes.dir" value="./classes" />
+	<property name="jar.dir" value="./jar" />
+	<property name="main-class" value="org.pcdm.PcdmDbDoc" />
+
+	<path id="project-classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	
+   <target name="clean">
+      <delete dir="${classes.dir}"/>
+      <mkdir dir="${classes.dir}"/>
+
+   	<delete dir="${jar.dir}"/>
+   	<mkdir dir="${jar.dir}"/>
+   </target>
+
+	<target name="compile" depends="clean">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="true">
+			<classpath refid="project-classpath" />
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<copy todir="${classes.dir}">
+			<fileset dir="${lib.dir}" />
+		</copy>
+		<manifestclasspath property="mf.classpath" jarfile="${jar.dir}/${ant.project.name}.jar">
+			<classpath refid="project-classpath" />
+		</manifestclasspath>
+
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+				<attribute name="Class-Path" value="${mf.classpath}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="test-jar-exec" depends="jar">
+		<java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+			<arg value="r02d" />
+			<arg value="oracle.jdbc.OracleDriver" />
+			<arg value="jdbc:oracle:thin:@ejhp67:1524:ede2" />
+			<arg value="H" />
+			<arg value="true" />
+			<arg value="D:/tmp" />
+		</java>
+	</target>
+</project>

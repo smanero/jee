@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="dcidid" version="2.0">
+   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"
+      xmlns:dcterms="http://purl.org/dc/terms/"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:opf="http://www.idpf.org/2007/opf">
+      <dc:title>%TITLE%</dc:title>
+      <dc:language xsi:type="dcterms:RFC3066">de</dc:language>
+      <dc:identifier id="dcidid" opf:scheme="URI">%URI%/%FILENAME%.epub</dc:identifier>
+      <dc:creator opf:role="aut">%CREATOR%</dc:creator>
+      <dc:subject>%SUBJECT%</dc:subject>
+      <dc:publisher>Perry Rhodan</dc:publisher>
+   </metadata>
+
+   <manifest>
+      <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+      <item id="css" href="epub.css" media-type="text/css" />
+      %MANIFEST-ITEMS%
+   </manifest>
+
+   <spine toc="ncx">
+   	%SPINE-ITEMS%
+   </spine>
+
+</package>

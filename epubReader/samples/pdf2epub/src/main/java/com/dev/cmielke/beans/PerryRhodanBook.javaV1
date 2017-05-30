@@ -1,0 +1,177 @@
+package com.dev.cmielke.beans;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.apache.log4j.Logger;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+
+public class PerryRhodanBook
+{	
+	private int bookNumber;
+	private String title;
+	private String subtitle;
+	private String authors;
+	private String introduction;
+	private String cycle;
+	private ArrayList<String> characters = new ArrayList<String>();
+	private ArrayList<String> chapters = new ArrayList<String>();
+	private HashMap<Integer, String> chapterPrefaces = new HashMap<Integer, String>();
+	private PDXObjectImage cover;
+	
+	private static Logger log = Logger.getLogger(PerryRhodanBook.class);
+
+	public int getChapterCount()
+	{
+		return chapters.size();
+	}
+	
+	public boolean hasChapterAPreface(int chapter)
+	{
+		boolean retValue = false;
+		if(chapterPrefaces.containsKey(chapter))
+		{
+			retValue = true;
+		}
+		return retValue;
+	}
+	
+	public String getTitle()
+	{
+		return title;
+	}
+
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
+
+	public String getSubtitle()
+	{
+		return subtitle;
+	}
+
+	public void setSubtitle(String subtitle)
+	{
+		this.subtitle = subtitle;
+	}
+
+	public String getIntroduction()
+	{
+		return introduction;
+	}
+
+	public void setIntroduction(String introduction)
+	{
+		this.introduction = introduction;
+	}
+
+	public ArrayList<String> getCharacters()
+	{
+		return characters;
+	}
+
+	public void setCharacters(ArrayList<String> characters)
+	{
+		this.characters = characters;
+	}
+
+	public HashMap<Integer, String> getChapterPrefaces()
+	{
+		return chapterPrefaces;
+	}
+
+	public void setChapterPrefaces(HashMap<Integer, String> chapterPrefaces)
+	{
+		this.chapterPrefaces = chapterPrefaces;
+	}
+
+	public ArrayList<String> getChapters()
+	{
+		return chapters;
+	}
+
+	public void setChapters(ArrayList<String> chapters)
+	{
+		this.chapters = chapters;
+	}
+
+	public int getBookNumber()
+	{
+		return bookNumber;
+	}
+
+	public void setBookNumber(int bookNumber)
+	{
+		this.bookNumber = bookNumber;
+	}
+
+	public String getAuthors()
+	{
+		return authors;
+	}
+
+	public void setAuthors(String authors)
+	{
+		this.authors = authors;
+	}
+	
+	public String cleanString(String text)
+	{
+		String retValue = text.replace("\n", " ");
+		retValue = text.replace("\t", "");
+		return retValue;
+	}
+
+	public String getCycle()
+	{
+		return cycle;
+	}
+
+	public void setCycle(String cycle)
+	{
+		this.cycle = cycle;
+	}
+
+	public PDXObjectImage getCover()
+	{
+		return cover;
+	}
+
+	public void setCover(PDXObjectImage cover)
+	{
+		this.cover = cover;
+	}
+	
+	public BufferedImage getCoverAsImageObject()
+	{
+		BufferedImage image = null;
+		try
+		{
+			image = getCover().getRGBImage();
+			
+		}
+		catch (IOException e)
+		{
+			log.error("Could not get RGBImage from PDXObjectImage object!", e);
+		}
+		return image;
+	}
+	
+	public String getCoverFilename()
+	{
+		return "cover_band_" + getBookNumber();
+	}
+	
+	public String getBookFilename()
+	{
+		return "PerryRhodan_Band" + getBookNumber();
+	}
+	
+	public String getDocumentTitle()
+	{
+		return getBookNumber() + " - Perry Rhodan - " + getCycle() + " - " + getTitle();
+	}
+}

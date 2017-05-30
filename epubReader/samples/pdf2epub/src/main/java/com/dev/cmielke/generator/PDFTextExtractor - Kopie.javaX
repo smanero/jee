@@ -1,0 +1,609 @@
+package com.dev.cmielke.generator;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+import org.apache.pdfbox.util.PDFTextStripper;
+
+import com.dev.cmielke.beans.BookType;
+import com.dev.cmielke.beans.PerryRhodanBook;
+import com.dev.cmielke.build.EPubBuilder;
+
+public class PDFTextExtractor {
+	private static final Logger log = Logger.getLogger(PDFTextExtractor.class);
+
+	private PerryRhodanBook book;
+	private PDDocument document;
+	private StringBuilder primaryBuffer;
+	private PDFTextStripper stripper;
+
+	private int startPage;
+	private int endPage;
+	private int currentPage;
+	private int currentChapter;
+	private State state = State.UNDEFINED;
+	private boolean imgPageFound;
+
+	public PDFTextExtractor(File file) {
+		try {
+			this.document = PDDocument.load(file);
+		} catch (IOException e1) {
+			log.error("Loading of PDF-Document failed!", e1);
+		}
+		try {
+			this.stripper = new PDFTextStripper();
+		} catch (IOException e) {
+			log.error("Error occured during instanciating PDFTextStripper!", e);
+		}
+
+		this.book = new PerryRhodanBook();
+		book.setCycle(extractCycleFromFile(file));
+
+		this.primaryBuffer = new StringBuilder();
+		this.startPage = 1;
+		this.endPage = getDocument().getNumberOfPages();
+		this.currentPage = startPage;
+		this.currentChapter = 1;
+	}
+
+	public void processDocument() {
+		try {
+			while (hasNextPage()) {
+				log.debug("CURRENT-PAGE: [" + getCurrentPage() + "]");
+
+				getStripper().setStartPage(getCurrentPage());
+				getStripper().setEndPage(getCurrentPage());
+
+				StringReader sReader = new StringReader(getStripper().getText(getDocument()));
+				BufferedReader bReader = new BufferedReader(sReader);
+
+				primaryBuffer.append(processingBuffer(bReader));
+
+				getNextPage();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Chapter-Filtering
+		postProcessingBuffer();
+
+		// Generation of EPub-Files
+		HTMLGenerator generator = new HTMLGenerator(book);
+		generator.generateEPub();
+
+		// Building EPub-Document
+		EPubBuilder builder = new EPubBuilder(book);
+		builder.generateEPub();
+
+		// Checking validity of created epub-file
+		// EpubChecker.validateEPubFile(ApplicationContants.EPUB_OUTPUT_DIRECTORY +
+		// book.getBookFilename() + ".epub");
+
+		try {
+			getDocument().close();
+		} catch (IOException e) {
+			log.error("Error occured during closing PDDocument!", e);
+		}
+	}
+
+	private void postProcessingBuffer() {
+		StringBuffer copy = new StringBuffer(primaryBuffer.toString());
+
+		int startPos, endPos;
+		startPos = copy.indexOf("%1.%");
+
+		if (startPos != -1) {
+			for (int index = 1; index <= getCurrentChapter(); index++) {
+				startPos = copy.indexOf("%" + index + ".%");
+				if (startPos == -1) {
+					log.error("ERROR within PDF document, chapter [" + index + "] is missing.");
+					log.debug("Trying to find next chapter..");
+					for (int i = index + 1; i <= getCurrentChapter(); i++) {
+						startPos = copy.indexOf("%" + i + ".%");
+						if (startPos == -1) {
+							log.error("ERROR within PDF document, chapter [" + i + "] is missing.");
+						} else {
+							log.debug("Next valid chapter is chapter [" + i + "]");
+							break;
+						}
+					}
+				}
+				endPos = copy.indexOf("%" + (index + 1) + ".%");
+				if (endPos == -1) {
+					endPos = copy.length() - 1;
+				}
+
+				String chapter = copy.substring(startPos, endPos);
+				book.getChapters().add(chapter);
+			}
+		} else {
+			startPos = copy.indexOf("%BEGIN%") + 7;
+			endPos = copy.length() - 1;
+
+			if (startPos != -1) {
+				String chapter = book.getChapterPrefaces().get(1);
+				book.getChapterPrefaces().remove(1);
+
+				chapter += copy.substring(startPos, endPos);
+				book.getChapters().add(chapter);
+			} else {
+				log.error("ERROR: Chapter could not be determined!");
+				System.exit(1);
+			}
+		}
+	}
+
+	private String processingBuffer(BufferedReader reader) throws IOException {
+
+		// Versuchen aus den ersten beiden Seiten das Cover Image / Heftnummer und
+		// Titel zu extrahieren
+		if (getCurrentPage() < 4 && (state==State.UNDEFINED || state==State.INTRODUCTION_NEXT || state==State.PERSONS_NEXT) ) {
+			if (!imgPageFound) { // Picture auf der Titelseite extrahieren
+				imgPageFound = extractTitleImage(reader);
+				if(imgPageFound) {
+					reader.mark(2048);
+					String line = reader.readLine();
+					line = reader.readLine();
+					if(line==null) {	// einige Hefte nur mit Titelbild auf der ersten Seite
+						return "";
+					}
+				}
+			}
+			
+			if (state==State.UNDEFINED) {
+				getMetaInfoFromFirstPages(reader);
+			}
+			if(state==State.INTRODUCTION_NEXT) {
+				extractIntroduction(reader);
+			}
+			if(state==State.PERSONS_NEXT) {
+				extractPersons(reader);
+			}
+		}
+		
+		if(state==State.BOOK_META_COMPLETE) {	// between "charaters" and first chapter
+			String line = null;
+			StringBuilder buf = new StringBuilder();
+			while ( (line=reader.readLine())!=null && !isChapterMark(line) && !line.matches("[0-9]*")) {
+				buf.append(line).append("\n");
+				reader.mark(10000);
+			}
+			if (buf.length() > 0) {
+				book.getChapterPrefaces().put(getCurrentChapter(), buf.toString());
+			}
+			if(isChapterMark(line) || line.matches("[0-9]*")) {
+				state = State.BOOK_PRECHAPTER;
+			}
+		}
+
+		if(state != State.BOOK_PRECHAPTER && state != State.BOOK_CHAPTERS) {
+			String line;
+			StringBuilder buf = new StringBuilder();
+			while( (line = reader.readLine()) != null) {
+				buf.append(line).append("\n");
+			}
+			return buf.toString();
+		}
+
+		StringBuilder buffer = new StringBuilder();
+		if (state == State.BOOK_PRECHAPTER) {
+			buffer.append("%BEGIN%");
+			state=State.BOOK_CHAPTERS;
+		}else if(state != State.BOOK_CHAPTERS){
+			throw new IllegalStateException("TextExtractor not in State BOOK_CHAPTERS");
+		}
+
+		// Normale Linien
+		String line;
+		while( (line=reader.readLine()) != null) {
+			buffer.append(processLine(line));
+		}
+		return buffer.toString();
+	}
+
+
+	private String processLine(String line) {
+		StringBuilder buffer = new StringBuilder();
+		line = line.trim();
+		if (!line.matches("[0-9]*")) {	// ignore page numbers
+			if (isChapterMark(line)) {	// is it a chapter
+				int chapter = Integer.parseInt(line.replaceAll("\\.", ""));
+
+				if (getCurrentChapter() + 2 >= chapter) {
+					setCurrentChapter(chapter);
+					buffer.append("\n").append("\t\t").append("%" + line + "%").append("\n\n");
+				} else {
+					log.debug("Line with a number and dot found as chapter [" + chapter + "], but is not in chapters sequence. Ignore it.");
+					log.trace("LINE >"+line);
+					buffer.append(line).append("\n");
+				}
+//			} else if(book.getType()==BookType.SILBERBAND && line.trim().equals("Perry Rhodan-Terminologie")) {
+//				log.debug("Silberband --> Perry Rhodan-Terminologie  found");
+//				setCurrentChapter(getCurrentChapter()+1);	// Anhang
+//				buffer.append("\n").append("\t\t").append("%" + line + "%").append("\n\n");
+			} else {
+				if (line.matches("\\*")) {
+					buffer.append("\n").append("\t\t").append("%" + line + "%").append("\n\n");
+				} else {
+					if (line.replaceAll(" ", "").toLowerCase().equals("ende")) {
+						buffer.append("\n").append("\t\t").append("%" + line + "%").append("\n\n");
+					} else {
+						buffer.append(line).append("\n");
+					}
+				}
+			}
+		}
+		return buffer.toString();
+	}
+
+	private String extractCycleFromFile(File file) {
+		String cycle = "";
+		String filename = file.getName();
+		String[] parts = filename.split(" - ");
+		cycle = parts[2];
+		return cycle;
+	}
+
+	private boolean getMetaInfoFromFirstPages(BufferedReader reader) throws IOException {
+		boolean headerFound = false;
+
+		if (!reader.markSupported()) {
+			throw new UnsupportedOperationException("BufferedReader does not support 'mark'");
+		}
+		reader.mark(2048);
+
+		headerFound = getMeta4HeftRoman(reader);
+		reader.reset();
+		if(!headerFound) headerFound = getMeta4Silberband(reader);
+		reader.reset();
+		if(!headerFound) showLines(reader);
+		reader.reset();
+
+		return headerFound;
+	}
+
+	/**
+	 * Heftroman Format, Seite beginnt mit<br/>
+	 * Nr. xxx
+	 * Titel
+	 * Untertitel
+	 * Author
+	 * Kurzinhalt "Die Hauptpersonen des Romans" => pro Zeile eine Person
+	 *  "1." => Start des ersten kapitel
+	 */
+	private boolean getMeta4HeftRoman(BufferedReader bReader) throws IOException {
+		StringBuilder buffer = new StringBuilder();
+		String line = getNextLine(bReader);
+		if(line==null) {
+			log.trace("Only empty lines found");
+			return false;
+		}
+
+		try {
+			String heftNo;
+			int pos = line.indexOf("Nr.");
+			if(pos>-1) {
+				int end=line.indexOf(" ",pos+4);
+				heftNo = line.substring(pos+3,end==-1?line.length():end).trim();
+				pos = end==-1?line.length():end;
+			}else if( (pos=line.indexOf("Nr"))>-1){
+				int end=line.indexOf(" ",pos+3);
+				heftNo = line.substring(pos+2,end==-1?line.length():end);
+				pos = end==-1?line.length():end;
+			}else{
+				log.trace("Heftnummer nicht gefunden, kein Heftroman Format");
+				return false;
+			}
+			book.setBookNumber(Integer.parseInt(heftNo));
+			if(line.length()>pos && line.substring(pos).trim().length()>0) {
+				// sollte titel enthalten
+				line = line.substring(pos).trim();
+			}else{
+				line = bReader.readLine();
+			}
+		} catch (IndexOutOfBoundsException e) {
+			log.trace("Heftnummer nicht gefunden, kein Heftroman Format");
+			return false;
+		} catch (NumberFormatException e) {
+			log.trace("Heftnummer nicht gefunden, kein Heftroman Format");
+			return false;
+		}
+		book.setType(BookType.HEFTROMAM);
+		log.info("BookType Perry Rhodan Heftroman");
+		book.setTitle(line);
+
+		// Getting subtitle and authors
+		String subtitle = "";
+		while( (line = getNextLine(bReader)) != null) {;
+			if (!line.startsWith("von ") && !line.startsWith("Von ")) {
+				subtitle = (subtitle+" "+line).trim();
+				book.setSubtitle(subtitle);
+			} else {
+				book.setSubtitle(subtitle);
+				book.setAuthors(line.substring(4));
+				break;
+			}
+		}
+
+		// Adding MetaData to Buffer
+		buffer.append(book.getBookNumber()).append("\n").append(book.getTitle()).append("\n").append(subtitle).append("\n").append(
+				book.getAuthors()).append("\n").append("\n");
+
+		// Buffer in den Primären übertragen und neuen Buffer anlegen
+		primaryBuffer.append(buffer.toString());
+		
+		bReader.mark(2048);
+		state=State.INTRODUCTION_NEXT;
+		return true;
+	}
+	
+	/**
+	 * Extract the book.Introduction and set the file pointer at the begining of "Hauptpersonen".
+	 * 
+	 * @param reader
+	 * @throws IOException
+	 */
+	private void extractIntroduction(BufferedReader reader) throws IOException {
+		StringBuilder buffer = new StringBuilder(book.getIntroduction());
+		reader.mark(2048);
+		String line = getNextLine(reader);
+		while (line != null && !(line.matches("Die Hautpersonen des Romans:") || isChapterMark(line)) ) {
+			buffer.append(line).append("\n");
+			reader.mark(2048);
+			line = reader.readLine();
+		}
+		book.setIntroduction(buffer.toString());
+		// Buffer in den Primären übertragen und neuen Buffer anlegen
+//		primaryBuffer.append(buffer.toString());
+		if(line!=null && line.matches("Die Hautpersonen des Romans:")) {
+			state = State.PERSONS_NEXT;
+		}else if(line!=null && isChapterMark(line)) {
+			log.trace("Intrduction end with start of chapter");
+			state = State.BOOK_META_COMPLETE;
+		}
+		reader.reset();
+	}
+	
+	private void extractPersons(BufferedReader reader) throws IOException {
+		reader.mark(2048);
+		String line = getNextLine(reader);
+		if(line != null && line.matches("Die Hautpersonen des Romans:")) {
+			StringBuilder buffer=new StringBuilder();
+			buffer.append("\n").append(line).append("\n");
+			reader.mark(2048);
+	
+			// Schreibe alle Linien bis zum ersten Kapitel in den Buffer
+			while ( (line=reader.readLine()) != null && isChapterMark(line)) {
+				if (line.contains("-")) {
+					if (line.endsWith(".")) {
+						buffer.append(line).append("\n");
+						book.getCharacters().add(line);
+					} else {
+						String secondLine = reader.readLine();
+						buffer.append(line).append(secondLine).append("\n");
+						book.getCharacters().add(line + " " + secondLine);
+					}
+				} else {
+					// Ende der Character-Aufzählung
+					state = State.BOOK_META_COMPLETE;
+					break;
+				}
+				reader.mark(2048);
+			}
+			primaryBuffer.append(buffer.toString());
+			if(isChapterMark(line)) {
+				state = State.BOOK_PRECHAPTER;
+			}
+		}else{
+			log.trace("Tag 'Hauptpersonen' not found");
+		}
+		reader.reset();
+	}
+
+	/**
+	 * Heftroman Format, Seite beginnt mit Nr. xxx Titel Untertitel Author
+	 * Kurzinhalt "Die Hauptpersonen des Romans" => pro Zeile eine Person "1." =>
+	 * Start des ersten kapitel
+	 */
+	private boolean getMeta4Silberband(BufferedReader bReader) throws IOException {
+		boolean found = false;
+		StringBuilder buffer = new StringBuilder();
+		String line;
+		
+		for (int i = 0; i < 10 && !found; i++) {
+			if( (line = bReader.readLine())!=null) {
+				if(line.trim().startsWith("Perry Rhodan Silberband")) {
+					found = true;
+					try {
+						book.setBookNumber(Integer.valueOf(line.trim().substring(24)));
+					}catch(NumberFormatException e) {
+						log.error("Line contains 'Silberband' but not a correct booknumber  >"+line);
+					}catch(IndexOutOfBoundsException e) {
+						log.error("Line contains 'Silberband' but not a correct booknumber  >"+line);
+					}
+				}
+			}
+		}
+		if(found) {
+			book.setType(BookType.SILBERBAND);
+			log.info("BookType Perry Rhodan Silberband");
+			book.setTitle("Perry Rhodan Silberband"+(book.getBookNumber()!=0?" "+book.getBookNumber():""));
+			for (int i = 0; i < 3 && book.getSubtitle().length()==0; i++) {
+				line = bReader.readLine();
+				if(line.trim().length()>0) {
+					book.setSubtitle(line.trim());
+				}
+			}
+			
+			boolean prologFound=false;
+			int lineCount = 20;	// max bis Prolog
+			bReader.mark(2048);
+			
+			// ! Prolog kann über mehrere Seiten gehen
+			while(lineCount>0 && (line=bReader.readLine())!=null) {
+				line = line.trim();
+				log.trace(">"+line);
+				if(isChapterMark(line)) {
+					if(!prologFound) {
+						log.warn("No Prolog found");
+					}
+					state=State.BOOK_PRECHAPTER;
+					break;	// Start Kapitel
+				}
+				if(!prologFound) {
+					if(line.startsWith("Prolog")) {
+						prologFound = true;
+						lineCount=500;	// max length of prologue
+						state = State.INTRODUCTION_NEXT;
+					}
+				}else{
+					buffer.append(line).append("\n");
+				}
+				bReader.mark(2048);
+			}
+			if(lineCount==0) {
+				throw new IllegalStateException(prologFound?"Prolog too large or first chapter not found":"No Prolog found");
+			}
+			book.setIntroduction(buffer.toString());
+		}
+		return found;
+	}
+	
+	private void showLines(BufferedReader reader) throws IOException {
+		int lineNo=0;
+		String line;
+		
+		while( (line=reader.readLine())!=null) {
+			lineNo++;
+			log.warn(lineNo+"> "+line);
+		}
+	}
+	
+	/**
+	 * Read the next line that is not empty or filled with white-spaces.
+	 * 
+	 * @param reader the stream to read from
+	 * @return <code>null</code> at EOF or the next line with text
+	 * @throws IOException
+	 */
+	private String getNextLine(BufferedReader reader) throws IOException {
+		String line;
+		while( (line=reader.readLine())!=null) {
+			line = line.trim();
+			if(line.length() > 0 ) {
+				return line;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Prüft ob auf der Seite ein Image vorhanden ist und trägt es als Titelseite
+	 * ein.
+	 * 
+	 * @param reader
+	 * @return
+	 * @throws IOException
+	 */
+	private boolean extractTitleImage(BufferedReader reader) throws IOException {
+		boolean found = false;
+		List<?> pages = getDocument().getDocumentCatalog().getAllPages();
+		PDPage firstPage = (PDPage) pages.get(0);
+		PDResources resources = firstPage.getResources();
+		Map<?, ?> images = resources.getImages();
+
+		if (images != null) {
+			Iterator<?> imageIter = images.keySet().iterator();
+			while (imageIter.hasNext()) {
+				String key = (String) imageIter.next();
+				if (!imgPageFound) {
+					book.setCover((PDXObjectImage) images.get(key));
+				} else {
+					log.warn("more than one image found! " + key);
+				}
+				found = true;
+			}
+		}
+		return found;
+	}
+	
+	private boolean isChapterMark(String line) {
+		return line.matches("[0-9][0-9]*\\.[ ]*");
+	}
+
+	private PDDocument getDocument() {
+		return document;
+	}
+
+	private PDFTextStripper getStripper() {
+		return stripper;
+	}
+
+	private int getEndPage() {
+		return endPage;
+	}
+
+	private int getCurrentPage() {
+		return currentPage;
+	}
+
+	private void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	private int getNextPage() {
+		setCurrentPage(getCurrentPage() + 1);
+		return getCurrentPage();
+	}
+
+	private boolean hasNextPage() {
+		boolean retValue = false;
+		if (getCurrentPage() <= getEndPage()) {
+			retValue = true;
+		}
+		return retValue;
+	}
+
+	private int getCurrentChapter() {
+		return currentChapter;
+	}
+
+	private void setCurrentChapter(int currentChapter) {
+		this.currentChapter = currentChapter;
+	}
+	
+	private enum State {
+		/**
+		 * Begin state or indicator that it looks not as a PerryRhodan Book
+		 */
+		UNDEFINED,
+		/**
+		 * The introduction chapter must follow, even if page is changed
+		 */
+		INTRODUCTION_NEXT,
+		/**
+		 * Expect that "Hauptpersonen" is next
+		 */
+		PERSONS_NEXT,
+		/**
+		 * Meta information complete, first chapter not found
+		 */
+		BOOK_META_COMPLETE,
+		BOOK_PRECHAPTER,
+		/**
+		 * First chapter found, %BEGIN% is written
+		 */
+		BOOK_CHAPTERS
+	}
+}

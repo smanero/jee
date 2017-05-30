@@ -1,0 +1,77 @@
+/************************************************************
+* CHANGE-LOG
+/************************************************************
+
+/*************************
+OPEN / UNSOLVED PROBLEMS *
+/*************************
+
+422
+Anpassung der Ausgabe, falls im PDF die Kapitelnummerierung falsch ist
+Der Band 422 beginnt mit Kapitel 2 
+
+Wieder eröffnet:
+
+
+/************************
+FIXED / SOLVED PROBLEMS *
+/************************
+
+Fenster aktualisieren während Convertierung   ==> Fixed
+Internationalisierung  => DONE
+
+Heft 502
+Kapitel 4++ fehlt  ==> fixed
+
+Heft 516
+Am Ende steht noch %ENDE% vor dem letzten Satz  ==> fixed
+
+Heft 519
+NAch Personen kommt EINLEITUNG die Fehlt im ePub  ==> fixed
+EINLEITUNG sollte Überschrift sein  === fixed
+Nach Kapitel 7 kommt direkt 9 damit kommt der Konverter nicht klar  ==> fixed (kapitel wird im Inhalt durchnummeriert)
+
+Heft 520
+Nach Personen Kommt PROLOG   ==> fixed
+
+Heft 521  (fixed)
+nur kapitel 1. (1. fehlt für kapitel 1)
+
+Heft 526
+Nach Einleitung VORSPIEL
+%ENDE% bleibt stehen  ==> fixed
+
+ab 538
+Vor der Seite noch 'komische' Texte   ==> fixed
+
+Heft 574 u.a.
+Autor wird aus Heft entnommen, dieser ist in manchen Büchern falsch formatiert. ==> fixed (StringUtilities)
+
+Problem siehe Heft 577:
+Kapitel haben Überschriften. Die normale Vorgehensweise kann diese Kapitel nicht mehr filtern
+und es entsteht ein Epub ohne Kapitel/Text. ==> fixed
+
+Zyklus nicht mehr aus Dateinamen ==> fixed
+
+Wenn die Kapitelanzahl 9 Kapitel übersteigt, ist die Reihenfolge der Kapitl nicht korrekt, es wird lexikografisch sortiert,
+was an dieser Stelle falsch ist. Lösung: Dateinamen für die einzelnen Kapitel bestehen nun nicht mehr nur aus der Kapitelnummer,
+sonder es werden führende 'Nullen' hinzugefügt (max. Stellen anzahl 2) so dass die lexikografische Sortierung wieder richtig ist.
+==> fixed
+
+318, 582, 588, etc.
+Wenn im Dateinamen Umlaute vorkommen, kann der Reader diese nicht lesen. Ursache: in der TOC.ncx Datei wurden nicht alle Titelausgaben
+XMLEscaped, wodurch es bei Reader-Programmen, die es sehr genau nehmen (z.B. Aldiko-Reader)dazu kommt, dass das Epub nicht gelesen werden kann.
+FBReader z.B. stört sich daran nicht. Aber so ist nun alles richtig formatiert. ==> fixed 
+
+582
+Filterung und Darstellung eines Epilogs ==> fixed
+
+593
+Probleme mit der Kapitelfilterung, Anpassung der RegEx. und 
+der Methode zur Bestimmnung, ob ein Kapitel vorliegt oder nicht. ==> fixed
+
+401, 581
+Filterung des Subtitles bei RomanHeften funktioniert nicht immer.
+Bei 401 (2-zeiliger Subtitle) gibt es eine NPE --> Buffer für erstes Kapitel war leer, Text musste an den Prolog/Preface angehängt werden.
+Bei 581 kann der Subtitle erst gar nicht ermittelt werden. Aber keine Exception ! --> Neue Methode zur Extrahierung des Subtitles
+==> fixed

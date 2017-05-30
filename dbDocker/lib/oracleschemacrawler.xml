@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<oracleschemacrawler>
+  <!-- R02xSchemaCrawlerTask
+	incluye los jar:
+      * r02x-classes.jar
+      * ojdbc14.jar
+      * orai18n.jar
+      * resolver.jar
+      * schemacrawler-8.4.jar
+      * schemacrawler-hsqldb-8.4.jar
+      * schemacrawler-oracle-8.4.jar
+  -->
+</oracleschemacrawler>

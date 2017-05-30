@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- saved from url=(0045)http://www.msh-tools.com/ebook/lrfformat.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<title>LRF format</title>
+<link href="./LRF format_files/MSHstyles.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+a:link {
+	text-decoration: none;
+	color: #000000;
+}
+a:visited {
+	text-decoration: none;
+	color: #000000;
+}
+a:hover {
+	text-decoration: none;
+	color: #000000;
+}
+a:active {
+	text-decoration: none;
+}
+body {
+	background-color: #CCCCCC;
+}
+.style4 {
+	color: #0000FF;
+	font-style: italic;
+	font-weight: bold;
+}
+-->
+</style></head>
+<!--
+.style1 {font-family: "Courier New", Courier, mono}
+-->
+
+<body>
+ 
+
+
+
+<table width="980" border="0" align="top" cellpadding="5">
+  <tbody><tr>
+    <td><div class="NavH1">
+      <div align="center"><a href="http://www.msh-tools.com/index.html">www.msh-tools.com content</a></div>
+</div></td>
+  </tr>
+</tbody></table>
+
+
+
+<table width="980" border="0" align="left" cellpadding="5">
+<tbody><tr><td valign="top" width="160">
+  <div class="NavBlock">
+       <div class="NavH1">Sections</div>
+	   <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/index.html">Home</a></div>
+    <div class="NavItem">• <a href="./LRF format_files/LRF format.htm">LRF format</a></div>
+    <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/frontlight.html">Front Light illumination </a></div>	
+	 </div>
+  <div class="NavBlock">
+    <div class="NavH1">Programs</div>
+    <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/lrs2lrf.html">LRS to LRF converter </a></div>
+        <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/fb2lrf.html">FB2 to LRF converter </a> </div>
+	<div class="NavItem">• <a href="http://www.msh-tools.com/ebook/fb2lrfc.html">FB2 to LRF console </a> </div>
+    <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/fixlrf.html">Fix LRF </a></div>
+    <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/lrfunpack.html">LRF unpack </a></div>
+	<div class="NavItem">• <a href="http://www.msh-tools.com/ebook/sudoku.html">SUDOKU game</a></div>
+	<div class="NavItem">• <a href="http://www.msh-tools.com/ebook/getscreen.html">Screenshot</a></div>
+  </div>
+    <div class="NavBlock">
+    <div class="NavH1">Internals</div>
+        <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/internals.html">PRS-500 inside</a></div>
+	<div class="NavItem">• <a href="http://www.msh-tools.com/ebook/internals505.html">PRS-505 inside</a></div>
+    <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/rendering.html">Image Renedring</a> </div>
+    <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/contrast.html">Contrast adjustment</a> </div>
+	<div class="NavItem">• <a href="http://www.msh-tools.com/ebook/bootloader.html">Bootstrap/Bootloader</a> </div>
+   </div>
+
+  <div class="NavBlock">
+    <div class="NavH1">Downloads</div>
+    <div class="NavItem">• <a href="http://www.msh-tools.com/ebook/downloads.html">Downloads</a></div>
+  </div>
+  <div class="NavBlock">
+    <div class="NavH1">Links</div>
+    <div class="NavItem"></div>
+    <div class="NavItem">• <a href="http://www.the-ebook.org/">the-ebook (in Russian)</a></div>
+    <div class="NavItem">• <a href="http://www.mobileread.com/">mobileread</a></div>
+    <div class="NavItem">• <a href="http://groups.yahoo.com/group/librie/">Librie yahoo group</a></div>
+	</div>
+  <div class="NavBlock">
+    <div class="NavH1">Contacts</div>
+     
+    <div class="NavItem">• <a href="mailto: m_ryb AT netzero DOT com">E-mail</a></div>
+  </div>
+  <center>
+</center></td>
+      <td width="805" valign="top"><div class="TextBlock">
+        <p align="center"><strong><a href="http://www.msh-tools.com/ebook/downloads.html">&lt;DOWNLOADS&gt;</a></strong></p>
+        <p class="FirstH">History of LRF format</p>
+		<p>The LRF format is a proprietary format by Sony used in their e-readers.The format is still undocumented. Many efforts were done by enthusiasts to understand the format and to make utilities for LRF conversion since appearing Sony Librie (Japaneese version) reader on the market. This review is my personal vision of the history and is limited to the resources I used in my work. LRF conversion is rapidly growing area of the content generation development (inspired by new Sony Reader PRS-500).  There are several other resources and wiki pages devoted to the LRF format and tools for conversion; the goal of this page is a review of major 
+
+
+achievements
+
+ for the beginners. This section reflects works done before February 2007, some links may not work. I'm not going to update this page for new resources, please visit forums listed in the Link section for up-to-date information.</p>
+		<p>The goal of this page is to provide a reference to the programs that can be used for understanding the LRF format, the program listed here are not the only (and  not necessarily the best) way to make lrf content. </p>
+		<p class="TextH2">Formats</p>
+		<p><strong>LRF</strong> format. This BINARY format used in Sony Librie and Sony PRS-500 Readers. The format is barely documented. Some very limited information can be found at <a href="http://www.sven.de/librie/Librie/BBeB"><strong>http://www.sven.de/librie/Librie/BBeB</strong></a> . The LRF format can be understood with the python code of lrf2lrs converter and utilities for extracting the objects from LRF files (see below). The LRF can contain text or images, the ability to show images sometimes used by homemade programs with the reference to "picture" LRF (actually this is just simple implementation of one of the features of LRF format). </p>
+		<p><strong>LRS</strong> (<span class="postbody">Librie Reader Source</span>) format. LRS is a "source" XML format with the description for the objects used in LRF. This format was introduced in the Book Creator program (commercial program with Japanese interface) by Canon (see below). The format is documented: <a href="http://www.y-adagio.com/public/committees/iec_pt62448/1_np(0509)/100_1017e_DC.pdf"><strong>http://www.y-adagio.com/public/committees/iec_pt62448/1_np(0509)/100_1017e_DC.pdf</strong></a> . LRS files can be generated by either 3 ways: 1) with commercial Book Creator program by Canon; 2) with freeware Book Designer program (see below for more details) 3) with Python lrf2lrs converter by <span class="style4">roxfan, Igor Skochinsky</span> and several newly developed utilities available at www.mobileread.com. </p>
+		<p><strong>BBeB </strong> "Broadband ebook" format by Sony. Another name of LRF and, sometimes, LRS formats.</p>
+		<p class="TextH2">Programs useful for understanding the LRF format </p>
+		<p>Major programs for understanding the LRF format, listed by date: </p>
+		<p>1. <a href="http://ps.canon-sol.jp/bc/"><strong> Book Creator</strong></a> Commercial program by Canon. First mentioned in yahoo Librie group in June 2004, see post #18). The program has Japanese interface. Since that time the development of homemade LRF content was started. <em>First</em>, many affords were done to make English version of Book Creator (see Librie yahoo group); <em>Second</em>, some homebrew programs use XYLogParser.dll (with Lrs2lrf wrapper by <span class="style4">roxfan</span>) to create LRF files from LRS source; <em>Third</em>, reverse engineering of LRF format was started to develop programs independent from XYLogParser.dll. </p>
+		<p>2. <strong>Makelrf</strong> program  by <span class="style4">scythic</span> (first introduced in yahoo librie group in October, 2004). The program comes with C-code and available in the File section of Librie group. The program allows to create Lrf files from the text files with support of the images. The program cannot create rich lrf files (only basic objects are supported), but it is hard to underestimated the progress archived with the program. Till now makelrf is widely used in many other programs as an engine for creation either simple text LRF or image-based LRF. Until recently makelrf was used in BookDesigner program (in "simple" conversion mode); and JAP programs to generate image-based LRFs. </p>
+		<p>3. <strong>LRFParser</strong> by <span class="style4">roxfan</span> (yahoo Librie group, November 2004, comes with C-source). The program decompiles LRF files to the objects, including TOC, header and compressed streams. To my knowledge, LRFparser is the first program where complex LRF objects and majority of tags were understood.</p>
+		<p> 4.<strong>  lrf2lrs</strong> (first version signed by <span class="style4">roxan</span>, February 2006; yahoo Librie group); the latest versions (signed by <span class="style4">roxfan, Igor Skochinsky</span>) are available at www.mobileread.com (Sony Portable Reader - Reader Developer's Corner - Lrf2Lrs thread, posts by <span class="style4">igorsk</span>). (I believe that roxfan=Igor Skorchinsky=igorsk). With the program the LRF files can be converted to the LRS files. Up to date the source of this Python program is the major source of information on LRF objects and tags. Almost all possible LRF objects and tags are supported by the program.<br>
+	    <br>
+	    5. <strong>LRFunpack</strong>	(by me, available at download section of this site, November	2006). NET2.0 C# application for extracting objects from LRF files with some translation of the tags and description of the streams. Creates both dump hex files for each of the object together with the text files with some decryption. I was using this program to understand the LRF format. The advantage of this program - it never stops decompiling even if tag is unknown. Some example of decompiled lrf can be found at download section. Sorry, no source available. </p>
+		<p>----------- </p>
+		<p>I did not mention Java tools, because I never tried them myself. Please have a look at the forums of the sites listed in the Link section. I believe the most significant contributions are <a href="http://monalipse.sourceforge.jp/tmp/lrf/"><strong> flatLrf</strong></a> (<a href="http://monalipse.sourceforge.jp/tmp/lrf/"><strong>http://monalipse.sourceforge.jp/tmp/lrf/</strong></a>, January 2005) and <strong>LRFParser.java</strong> (by <span class="style4">Scotty1024</span>, May 2005, Librie yahoo group). FlatLrf is Java application to create lrf from html files; LRFParser.java is Java version of LRFParser by roxfan.</p>
+		<p><strong><a href="http://www.bookdesigner.org/">BookDesigner</a></strong> (<strong><a href="http://wiki.mobileread.com/wiki/Book_Designer">Wiki page</a></strong>) (by <span class="style4">Valerii Woizechovsky (aka vvv)</span>)). This program is an universal program for conversion between many formats, reading and ebook creation. The program creates LRS file, than the LRS file is converted to LRF with external third-party converters (makelrf, lrs2lrf , LRSparser by AlexXF, the latest version uses my MSH_Lrsparser). The strong side of the BookDesigner for understanding the LRF format is ability to generate custom LRS together with corresponding LRF file for further analysis.</p>
+		<p class="TextH2">LRF conversion utilities </p>
+		<p>Please refer to the <a href="http://wiki.mobileread.com/wiki/E-book_conversion"><strong>Wiki</strong></a> page and the link section for recent progress on content generation. Recently Sony launched site for the developers at www. prslabs.com. 
+
+
+Unfortunately
+
+ there is almost no new information. The LRS format specification is given (the one mentioned above), the XYLogParser.dll (almost the same to the discussed above, it is also very slow), and the description of the interface around the XYLogparser.dll.</p>
+		<p>&nbsp;</p>
+		<p>&nbsp;		  </p>
+		</div>
+	  
+
+    </td>
+
+ 
+</tr></tbody></table>
+
+
+</body></html>

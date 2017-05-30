@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+XRadar
+Copyright (c) 2004, 2005, Kristoffer Kvam
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of Kristoffer Kvam nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+See licence.txt for dependancies to other open projects.
+======================================================================= -->
+<project name="XRadar r02z" default="statics_current">
+	<echo>Encoding ${file.encoding}</echo>
+	<!--
+   Uncomment if you want to assert if XRadar is using your logger configuration file
+   <property name="java.util.logging.config.file" value="logging-debug.properties"/>
+	<echo>Logging ${java.util.logging.config.file}</echo>
+   -->
+	<property file="user.properties" />
+	<property environment="env" />
+
+	<property file="project.properties" />
+	<!-- specify where to find the tools's jars. -->
+	<property name="tools.home" value="D:/usr/xradar-1.1.2/lib" />
+
+	<!--<property name="findbugs.auxclasspath" value="lib" />-->
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<fileset dir="${tools.home}">
+				<include name="**/*.jar" />
+			</fileset>
+		</classpath>
+	</taskdef>
+
+	<!-- XML Catalog declaration:
+   This is not requirements for XRadar to run but it allows it to run smoothly
+   without internet connexion (or simply without using a proxy)
+   -->
+	<xmlcatalog>
+		<catalogpath>
+			<pathelement location="jar:file:xradar-1.1.2.jar!/xradar.catalog.xml" />
+		</catalogpath>
+	</xmlcatalog>
+
+	<!--  Here we add all the needed jars for the tools, including xradar jars -->
+	<path id="tools.classpath">
+		<fileset dir="${tools.home}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!--  Here we define the new ant tasks -->
+	<taskdef name="xradar-dynamics" classname="org.sourceforge.xradar.ant.DynamicsTask">
+		<classpath refid="tools.classpath" />
+	</taskdef>
+
+	<taskdef name="xradar-statics" classname="org.sourceforge.xradar.ant.StaticsTask">
+		<classpath refid="tools.classpath" />
+	</taskdef>
+
+	<taskdef name="xradar-loader" classname="org.sourceforge.xradar.ant.RadarLoaderTask">
+		<classpath refid="tools.classpath" />
+	</taskdef>
+	<taskdef name="xradar-analyser" classname="org.sourceforge.xradar.ant.ResultsAnalyserTask">
+		<classpath refid="tools.classpath" />
+	</taskdef>
+
+	<target name="all" depends="statics_all,dynamics_all" />
+
+	<!-- 
+   depends="build_one" 
+   cloc requires PERL
+      <property name="coupling.analysis" value="true" />
+      <property name="target.test.classes" value="false" />
+      <property name="skip.jdepend" value="false" />
+      <property name="skip.pmd" value="false" />
+      <property name="skip.cpd" value="false" />
+      <property name="skip.checkstyle" value="false" />
+      <property name="skip.ncss" value="false" />
+      <property name="skip.findbugs" value="false" />
+      <property name="include.compile" value="false" />
+      <property name="include.junit" value="false" />
+      <property name="include.cobertura" value="false" />
+      <property name="include.emma" value="false" />
+   -->
+	<!-- WARNING : better use an absolute pathname for the docs-home ! -->
+	<target name="statics"
+           description="Runs statics reports for a given version, defined with -Dversion=4 (for instance)">
+		<echo>Running xradar statics on version ${version}</echo>
+		<property name="workdir" value="${output.dir}/${version.prefix}${version}/docs" />
+		<property name="docs.home" value="${output.dir}/${version.prefix}${version}/docs" />
+		<property name="script" value="tools.xml" />
+		<echo>doc-home:${docs.home}</echo>      
+		<mkdir dir="${workdir}" />
+		<mkdir dir="${workdir}/tooling" />
+		<mkdir dir="${workdir}/xml" />
+		<echo>Running the tools on version ${version}.</echo>
+		<xradar-loader resource="xradar://scripts/${script}" target="${workdir}/tooling/${script}" />
+		<ant antfile="${workdir}/tooling/${script}">
+			<property name="tools.lib" value="${tools.home}" />
+			<property name="target.javadoc" value="${docs.home}/javadoc" />
+			<property name="java2html.root" value="${docs.home}/htmlcode" />
+			<property file="etc/${version.prefix}${version}.properties" />
+			<property file="etc/statics.properties" />
+		</ant>      
+
+		<echo>Running xradar statics build report on version ${version}</echo>
+		<xradar-statics debug="true"
+                      properties="${properties-file}"
+                      config="etc/radar-config.xml"
+                      offline="true"
+                      target="${workdir}"
+                      javadocEnabled="true"
+                      javadocRoot="${docs.home}/javadoc"
+                      java2htmlRoot="${docs.home}/htmlcode">
+			<!-- warning: not the same value as for the tools.xml script... -->
+			<report file="${docs.home}/xml/jdepend_report.xml" type="jdepend" />
+			<report file="${docs.home}/xml/cpd_report.xml" type="cpd" />
+			<!-- <report file="${docs.home}/xml/pmd_report.xml" type="pmd" /> -->
+			<report file="${docs.home}/xml/javancss_report.xml" type="javancss" />
+			<report file="${docs.home}/xml/ckjm_report.xml" type="ckjm" />
+			<report file="${docs.home}/xml/depfind_report.xml" type="depfind" />
+			<!-- <report file="${docs.home}/xml/test_depfind_report.xml" type="test_depfind" /> -->
+			<report file="${docs.home}/xml/checkstyle_report.xml" type="checkstyle" />
+			<report file="${docs.home}/xml/findbugs_report.xml" type="findbugs" />
+			<report file="${docs.home}/xml/macaron.xml" type="macaron" />
+			<!-- <report file="${docs.home}/xml/cloc.xml" type="cloc" /> -->
+			<!--
+			 <report file="${docs.home}/xml/junit.xml" type="junit" />
+			 <report file="${docs.home}/xml/cobertura.xml" type="cobertura" />
+			 <report file="${docs.home}/xml/emma.xml" type="emma" />
+			-->
+		</xradar-statics>	
+		<echo>Check if XRadar found any violation:</echo>
+		<xradar-analyser failOnError="false">
+			<rule name="illegal-dependancy"
+               type="xpath"
+               query="//IntegratedAnalysis/Packages/Package/DependsUpon/Package[@legal='false']"
+               file="${workdir}/xml/masterreport_final.xml" />
+		</xradar-analyser>
+	</target>
+
+	<target name="statics_current" description="Runs statics reports for all historic radar versions">
+		<property name="version" value="${version.current}" />
+		<antcall target="statics" />
+	</target>
+
+	<target name="statics_all" description="Runs statics reports for all historic radar versions">
+		<foreach list="${version.list}" target="statics" param="version" trim="true" inheritall="true" />
+	</target>
+
+	<target name="dynamics_all"
+           description="Merges all historic and the current versions, and produces a report for all historic versions">
+		<property name="docs.home" value="${output.dir}/dynamics/docs" />
+		<xradar-dynamics debug="false" config="etc/radar-config.xml" target="${docs.home}" staticsConfigured="true">
+			<!--  false will render staticsRoot attributes optionnal -->
+			<!-- If orderId == 1, 'previousReport' is not required as it is the first version of the project
+				Xradar will use the etc/config/dynamics/dynamics-master-base.xml
+				embedded in the jar distribution.
+			-->
+			<input reportToMerge="${output.dir}/r02z1/docs/xml/radar_report_normalized.xml"
+                qualityReportPath="${output.dir}/r02z1/docs/xml/reports"
+                versionId="1"
+                daysSinceLast="1"
+                staticsRoot="${output.dir}/r02z1/docs"
+                masterFinal="${docs.home}/xml/dynamics-master-final.xml" />
+
+			<input previousReport="${docs.home}/xml/dynamics-master-final.xml"
+                reportToMerge="${output.dir}/r02z2/docs/xml/radar_report_normalized.xml"
+                qualityReportPath="${output.dir}/r02z2/docs/xml/reports"
+                versionId="2"
+                daysSinceLast="1"
+                staticsRoot="${output.dir}/r02z2/docs"
+                masterFinal="${docs.home}/xml/dynamics-master-final.xml" />
+		</xradar-dynamics>
+	</target>
+
+	<target name="dynamics_first"
+           description="Merges only the current version, and produces a report for all historic versions">
+		<xradar-dynamics debug="false" config="etc/radar-config.xml" target="dynamics/docs" staticsConfigured="true">
+			<!--  false will render staticsRoot attributes optionnal -->
+			<!-- If orderId == 1, 'previousReport' is not required as it is the first version of the project
+				Xradar will use the etc/config/dynamics/dynamics-master-base.xml
+				embedded in the jar distribution.
+			-->
+			<input reportToMerge="r02z1/docs/xml/radar_report_normalized.xml"
+                qualityReportPath="r02z1/docs/xml/reports/"
+                versionId="1"
+                daysSinceLast="1"
+                staticsRoot="r02z1/docs"
+                masterFinal="dynamics/docs/xml/dynamics-master-final.xml" />
+		</xradar-dynamics>
+	</target>
+
+	<!-- 
+    =================================================================
+    Clean
+    =================================================================
+    -->
+
+	<target name="clean" description="Delete all generated files." depends="clean_dynamics, clean_statics_all" />
+
+	<target name="clean_dynamics" description="Delete generated doc-files.">
+		<delete dir="${output.dir}/dynamics" failonerror="false" />
+	</target>
+
+	<target name="clean_statics_all" description="Delete generated statics files.">
+		<foreach list="${version.list}" target="-clean_statics_one" param="version" trim="true" />
+		<delete dir="gen" />
+	</target>
+
+	<target name="clean_current" description="Delete generated statics files.">
+		<property name="version" value="${version.current}" />
+		<antcall target="-clean_statics_one" />
+	</target>
+
+	<target name="-clean_statics_one">
+		<delete dir="${output.dir}/${version.prefix}${version}/classes" failonerror="false" />
+		<delete dir="${output.dir}/${version.prefix}${version}/docs" failonerror="false" />
+		<delete dir="${output.dir}/${version.prefix}${version}/testclasses" failonerror="false" />
+		<delete dir="${output.dir}/${version.prefix}${version}/testreport" failonerror="false" />
+	</target>
+
+	<!-- 
+    =================================================================
+    Unit testing 
+    (more or and less the required instrumented part for the test cover tools)
+    =================================================================
+    -->
+
+	<target name="set_junit_properties" if="include.junit">
+		<property name="junit.source.directory" value="${output.dir}/${version.prefix}${version}/testsource" />
+		<available file="${junit.source.directory}" property="junit.report.analysis" value="true" type="dir" />
+	</target>
+
+	<target name="run_tests_for_release" if="junit.report.analysis" unless="skip.analysis">
+		<echo>Prepare test coverage (if any)</echo>
+		<antcall target="run_emma_instrumentation" />
+		<antcall target="run_test_cobertura_instrumentation" />
+
+		<property name="target.test.classes" value="${version.prefix}${version}/testclasses" />
+		<property name="target.test.source" value="${version.prefix}${version}/testsource" />
+
+		<echo>Run unit tests from directory : ${target.test.classes}</echo>
+		<junit printsummary="yes" haltonfailure="yes" fork="on" dir="${basedir}">
+			<classpath>
+				<path path="${version.prefix}${version}/instrumented-classes" />
+				<path path="${version.prefix}${version}/classes" />
+				<path path="${version.prefix}${version}/testclasses/" />
+
+				<path refid="cobertura.classpath" />
+				<path refid="emma.classpath" />
+			</classpath>
+			<formatter type="xml" />
+			<batchtest todir="${version.prefix}${version}/testreport/junit">
+				<fileset dir="${target.test.source}">
+					<include name="**/**.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+		<mkdir dir="${version.prefix}${version}/docs/xml" />
+		<junitreport todir="${version.prefix}${version}/docs/xml" tofile="junit.xml">
+
+			<fileset dir="${version.prefix}${version}/testreport/junit">
+				<include name="TEST-*.xml" />
+			</fileset>
+		</junitreport>
+
+		<echo>Generate test coverage report (if any)</echo>
+
+		<antcall target="generate_emma_report" />
+		<antcall target="generate_cobertura_report" />
+	</target>
+
+
+	<!-- 
+    =================================================================
+        Cobertura specifics settings
+    =================================================================
+    -->
+
+	<path id="cobertura.classpath">
+		<pathelement location="${tools.home}/cobertura/asm-3.0.jar" />
+		<pathelement location="${tools.home}/cobertura/asm-tree-3.0.jar" />
+		<pathelement location="${tools.home}/cobertura/jakarta-oro-2.0.8.jar" />
+		<pathelement location="${tools.home}/cobertura/log4j-1.2.9.jar" />
+		<pathelement location="${tools.home}/cobertura/cobertura-1.9.1.jar" />
+	</path>
+
+	<taskdef resource="tasks.properties">
+		<classpath refid="cobertura.classpath" />
+	</taskdef>
+
+	<target name="run_test_cobertura_instrumentation" if="include.cobertura">
+		<cobertura-instrument todir="${version.prefix}${version}/instrumented-classes">
+			<fileset dir="${version.prefix}${version}/classes">
+				<include name="**/*.class" />
+			</fileset>
+		</cobertura-instrument>
+	</target>
+
+	<target name="generate_cobertura_report" if="include.cobertura">
+		<taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+		<mkdir dir="${version.prefix}${version}/testreport/cobertura" />
+		<cobertura-report format="xml"
+                        srcdir="${version.prefix}${version}/source"
+                        destdir="${version.prefix}${version}/testreport/cobertura" />
+		<cobertura-report format="html"
+                        srcdir="${version.prefix}${version}/source"
+                        destdir="${version.prefix}${version}/testreport/cobertura" />
+		<move file="${version.prefix}${version}/testreport/cobertura/coverage.xml"
+            tofile="${version.prefix}${version}/docs/xml/cobertura.xml" />
+		<!-- cleaning -->
+		<delete file="cobertura.ser" quiet="true" />
+		<delete dir="${version.prefix}${version}/instrumented-classes" quiet="true" />
+	</target>
+
+	<!-- 
+    ================================================================
+        Emma specifics settings
+    =================================================================
+    -->
+	<path id="emma.classpath">
+		<pathelement location="${tools.home}/emma/emma.jar" />
+		<pathelement location="${tools.home}/emma/emma_ant.jar" />
+	</path>
+
+	<taskdef name="emma" classname="com.vladium.emma.emmaTask">
+		<classpath refid="emma.classpath" />
+	</taskdef>
+
+	<target name="run_emma_instrumentation" if="include.emma">
+		<emma enabled="true">
+			<instr instrpath="${version.prefix}${version}/testclasses/"
+                destdir="${version.prefix}${version}/instrumented-classes/"
+                metadatafile="${version.prefix}${version}/docs/testreport/metadata.emma"
+                mode="overwrite">
+			</instr>
+		</emma>
+	</target>
+
+	<target name="generate_emma_report" if="include.emma">
+		<taskdef name="emma" classname="com.vladium.emma.emmaTask">
+			<classpath refid="emma.classpath" />
+		</taskdef>
+
+		<emma enabled="true">
+			<report sourcepath="${basedir}" sort="+name" metrics="method:70,block:80,line:80,class:100">
+				<fileset dir="${basedir}">
+					<include name="${version.prefix}${version}/docs/testreport/metadata.emma" />
+					<include name="*.ec" />
+				</fileset>
+				<xml outfile="${version.prefix}${version}/docs/xml/emma.xml" depth="method" />
+
+			</report>
+		</emma>
+		<delete>
+			<fileset dir="." includes="*.ec" />
+		</delete>
+	</target>
+
+	<!--
+    ===========================================================================================================
+        The following targets are only here for the "testproject". They are not needed in a real project.
+        In that case, you would typically have built the system elsewere are would supply your project with
+        the correct paths.
+    ===========================================================================================================
+    -->
+
+	<target name="build" description="Builds all versions." if="include.compile">
+		<foreach list="${version.list}" target="build_one" param="version" trim="true" inheritall="true" />
+	</target>
+
+	<target name="build_one"
+           description="Builds the specified version, defined with -Dversion=4 (for instance)"
+           depends="copy_externalsource, set_junit_properties"
+           if="include.compile">
+
+		<property file="etc/${version.prefix}${version}.properties" />
+		<mkdir dir="${output.dir}/${version.prefix}${version}/classes" />
+		<javac srcdir="${output.dir}/${version.prefix}${version}/source"
+             destdir="${output.dir}/${version.prefix}${version}/classes"
+             debug="true"
+             includeantruntime="false" />
+		<antcall target="build_and_run_tests_for_release" />
+	</target>
+
+	<target name="is_externalsource_available">
+		<available property="externalsource.exists" file="${output.dir}/${version.prefix}${version}/externalsource" type="dir" />
+	</target>
+
+	<target name="copy_externalsource" depends="is_externalsource_available" if="externalsource.exists">
+		<copy todir="${output.dir}/${version.prefix}${version}/docs">
+			<fileset dir="${output.dir}/${version.prefix}${version}/externalsource">
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build_and_run_tests_for_release" unless="skip.analysis">
+		<antcall target="-build_tests_for_release_if_test_suite_analysis" />
+		<antcall target="-build_tests_for_release_if_junit_report_analysis" />
+		<antcall target="run_tests_for_release" />
+	</target>
+
+	<target name="-build_tests_for_release_if_test_suite_analysis" if="test.suite.analysis" unless="skip.analysis">
+		<antcall target="build_tests_for_release" />
+	</target>
+
+	<target name="-build_tests_for_release_if_junit_report_analysis" if="junit.report.analysis" unless="skip.analysis">
+		<antcall target="build_tests_for_release" />
+	</target>
+
+	<target name="build_tests_for_release">
+		<echo>Java ClassPath: ${java.class.path}</echo>
+		<path id="project.classpath">
+			<pathelement location="${output.dir}/${version.prefix}${version}/instrumented-classes" />
+			<pathelement location="${output.dir}/${version.prefix}${version}/classes" />
+			<pathelement location="${output.dir}/${version.prefix}${version}/testclasses/" />
+			<fileset dir="lib">
+				<include name="*.jar" />
+			</fileset>
+			<pathelement path="${java.class.path}/" />
+		</path>
+
+		<mkdir dir="${output.dir}/${version.prefix}${version}/testclasses" />
+		<mkdir dir="${output.dir}/${version.prefix}${version}/testreport/junit" />
+
+		<javac srcdir="${output.dir}/${version.prefix}${version}/testsource"
+             destdir="${output.dir}/${version.prefix}${version}/testclasses"
+             debug="true">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+</project>

@@ -1,0 +1,59 @@
+##
+## Encabezado del archivo
+##
+package $paquete;
+
+/**
+ * Código Generado con la máquina de generación de código Velocity
+ */
+public class $clase #if($superClase) extends $superClase.getName() #end  
+{
+	
+	#foreach($atributo in $atributos)
+	protected $atributo.getType().getName() $atributo.getName(); 
+	#end
+	
+	//==========================================================
+	// Métodos Constructores
+	//==========================================================
+	
+	#foreach($constructor in $constructores) 
+		#set($temp=0) 
+		#set($params = $constructor.getParameterTypes()) 
+		
+	/**
+	 *
+	 */
+	 public ${clase}( #foreach($param in $params) #set($temp=$temp+1)#if($temp!=1), #end $param.getName() parametro$temp  #end ) 
+	{	
+		#set($temp=0)
+	super(#foreach($param in $params) #set($temp=$temp+1)#if($temp!=1), #end parametro$temp  #end);
+	}
+	 
+	#end
+	
+	//==========================================================
+	// Métodos
+	//==========================================================
+	
+	#foreach($metodo in $metodos) 
+		#set($temp=0) 
+		#set($params = $metodo.getParameterTypes()) 
+	
+	/**
+	 *
+	 */
+	 public ${metodo.getReturnType().getName()} ${metodo.getName()}( #foreach($param in $params) #set($temp=$temp+1) #if($temp!=1), #end $param.getName() param$temp  #end )
+		#set($i = 0) #if($metodo.getExceptionTypes().length !=0) throws ${metodo.getExceptionTypes()} #foreach($exception in $metodo.getExceptionTypes()) #set($i = $i+1) #if($i!=1), #end exception.getName()#end #end
+	{
+	   //TODO completar implementación de acuerdo con la documentación del método
+	   #if($metodo.getReturnType().getName()=="void") 
+	   #elseif($metodo.getReturnType().getName()=="boolean") return false;
+	   #elseif($metodo.getReturnType().getName()=="char") return 'a';
+	   #elseif($metodo.getReturnType().getName()=="int") return 0;
+	   #else return null; #end
+	 
+	 }
+	#end
+	
+}

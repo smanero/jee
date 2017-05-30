@@ -1,0 +1,73 @@
+body {
+	color: black;
+	background-color: white;
+	font-size: 12px;
+}
+
+h1,h2,h3 {
+	margin: 0;
+}
+
+.bookTitle {
+	font-weight: 500;
+	padding-bottom: 0.5em;
+}
+
+.subtitle {
+	font-weight: 300;
+	font-style: italic;
+	padding-bottom: 0.5em;
+}
+
+.chapterHeader {
+	font-weight: bolder;
+	text-align: center;
+	padding-bottom: 0.5em;
+}
+
+.introduction {
+}
+
+.chapterContainer {
+	font-weight: 100;
+}
+
+.chapterText {
+	font-weight: 100;
+}
+
+.separator {
+	font-weight: bold;
+	text-align: center;
+}
+
+.endSeparator {
+	font-weight: bold;
+	text-align: center;
+}
+.epilog {
+	font-weight: bold;
+	text-align: center;
+}
+
+#TimeTable {
+	font-weight: 100;
+	text-align: left;
+}
+.TimeTableTag {
+	font-weight: bolder;
+}
+.TimeTableText {
+	font-weight: lighter;
+}
+#Glossar {
+	font-weight: 100;
+}
+.GlossarTag {
+	font-weight: bolder;
+	padding-bottom: 0;
+}
+.GlossarText {
+	font-weight: lighter;
+	padding-bottom: 1em;
+}

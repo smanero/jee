@@ -1,0 +1,157 @@
+.NavH1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	background-color: #999999;
+	clip: rect(2px,auto,2px,auto);
+	border-top: 1px none #000000;
+	border-right: 1px none #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px none #000000;
+}
+.NavBlock {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	background-color: #FFFFFF;
+	margin-bottom: 5px;
+	border: 1px solid #000000;
+}
+.NavItem {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	list-style-type: circle;
+	list-style-position: outside;
+	font-weight: normal;
+	clip: rect(auto,auto,auto,auto);
+	color: #000000;
+	font-style: normal;
+	line-height: normal;
+	margin-top: 2px;
+	margin-right: auto;
+	margin-bottom: 2px;
+	margin-left: 5px;
+}
+.NavItem A:hover {
+	font-size: 12px;
+	list-style-type: circle;
+	list-style-position: outside;
+	font-weight: bold;
+	clip: rect(auto,auto,20px,auto);
+	color: #000099;
+}
+.NavItem A {
+	color: #000000;
+}
+.BottBorder {
+	border-top-width: thin;
+	border-right-width: thin;
+	border-bottom-width: thin;
+	border-left-width: thin;
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: solid;
+	border-left-style: none;
+	border-top-color: #000000;
+	border-right-color: #000000;
+	border-bottom-color: #000000;
+	border-left-color: #000000;
+	height: 2px;
+	font-size: 2px;
+}
+.TextBlock {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	background-color: #FFFFFF;
+	margin-bottom: 5px;
+	border: 1px solid #666666;
+	text-align: justify;
+	top: 0px;
+	clip: rect(0px,auto,auto,auto);
+	margin-top: 0px;
+	padding: 5px 20px;
+}
+.TextH1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	background-color: #999999;
+	clip: rect(2px,auto,2px,auto);
+	width: 150px;
+	margin: 0px;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px none #000000;
+	border-left: 1px solid #000000;
+}
+.TextBlock A:hover {
+
+	font-size: 12px;
+	list-style-type: circle;
+	list-style-position: outside;
+	font-weight: bold;
+	clip: rect(auto,auto,20px,auto);
+	color: #0000FF;
+}
+.Heap {
+	font-family: "comic Sans MS";
+	font-size: 14px;
+	font-style: normal;
+	font-weight: normal;
+	background-color: #D4DFFF;
+	border: 1px solid #2A0000;
+	margin-bottom: 15px;
+	color: #551F55;
+	text-align: justify;
+	padding: 5px 10px 0px;
+}
+.TextH2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	clip: rect(2px,auto,2px,auto);
+	margin: 0px;
+	color: #990099;
+}
+.Tables {
+	border: thin solid #2A0000;
+	background-color: #CCCCCC;
+}
+.TD {
+	background-color: #FFFFFF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.TxtOut {
+	background-color: #F5F5FC;
+	background-position: center;
+	border: 1px dotted #333300;
+	height: 200px;
+	width: 650px;
+	font-family: "Courier New", Courier, mono;
+	font-size: 12px;
+}
+.chapter {
+	font-weight: bold;
+	color: #663366;
+}
+.FirstH {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	background-color: #999999;
+	color: #330066;
+}
+.TxtOutShort {
+
+	background-color: #CCCCFF;
+	background-position: center;
+	border: 1px dotted #333300;
+	height: 308px;
+	width: 420px;
+	font-family: "Courier New", Courier, mono;
+	font-size: 12px;
+}
+.newarea {
+	background-color: #F3F2FF;
+	border: thin dotted #CCCCCC;
+}

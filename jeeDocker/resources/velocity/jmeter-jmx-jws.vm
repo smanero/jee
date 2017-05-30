@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="2.1">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="${serviceName} - regresion" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="Variables definidas por el Usuario" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="veces" elementType="Argument">
+            <stringProp name="Argument.name">veces</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="token_r02n" elementType="Argument">
+            <stringProp name="Argument.name">token_r02n</stringProp>
+            <stringProp name="Argument.value"></stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath">..\lib\weblogic\webserviceclient.jar,..\lib\weblogic\wlxbean.jar,..\lib\weblogic\xbean.jar,..\lib\oracle10\ojdbc14.jar,..\lib\oracle10\orai18n.jar,..\lib\schemas\q99iCTschemas-10.00.04.jar,..\lib\schemas\q99iDOKUSIschemas-10.00.04.jar,..\lib\schemas\q99iFCPschemas-10.00.04.jar,..\lib\schemas\q99iFCTTschemas-10.00.04.jar,..\lib\schemas\q99iGATschemas-10.00.04.jar,..\lib\schemas\q99iGenericSchemas-10.00.04.jar,..\lib\schemas\q99iISschemas-10.00.04.jar,..\lib\schemas\q99iNotificationSchemas-10.00.04.jar,..\lib\schemas\q99iOCEschemas-10.00.02.jar,..\lib\schemas\q99iPLATEAschemas-10.00.04.jar,..\lib\schemas\q99iPNTschemas-10.00.04.jar,..\lib\schemas\q99iPPSschemas-10.00.02.jar,..\lib\schemas\q99iRPschemas-10.00.04.jar,..\lib\schemas\q99iSCschemas-10.00.04.jar,..\lib\schemas\q99iSHFschemas-10.00.04.jar,..\lib\schemas\q99iSHNschemas-10.00.04.jar,..\lib\schemas\q99iSRTschemas-10.00.04.jar,..\lib\classes\r02s-classes-10.08.jar,..\lib\aspectos\EJBAspect.jar,..\lib\config</stringProp>
+    </TestPlan>
+    <hashTree>
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="procedimientos" enabled="true">
+        <stringProp name="filename">./datos/procedures.txt</stringProp>
+        <stringProp name="fileEncoding"></stringProp>
+        <stringProp name="variableNames">procedure</stringProp>
+        <stringProp name="delimiter">,</stringProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="shareMode">Current thread group</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      
+      #foreach($metodo in $metodos)
+      #set($methodName = "$metodo.methodName()")
+      #set($methodParams = $metodo.paramName())
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="${methodName}" enabled="true">
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Controlador Loop" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">$veces</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <longProp name="ThreadGroup.start_time">1293018832000</longProp>
+        <longProp name="ThreadGroup.end_time">1293018826000</longProp>
+      </ThreadGroup>
+      <hashTree>
+        <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Controlador Only Once" enabled="true"/>
+        <hashTree>
+          <HTTPSampler guiclass="HttpTestSampleGui" testclass="HTTPSampler" testname="ServletGenerateToken" enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="Variables definidas por el Usuario" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="app" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">r02n</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">app</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain">www.mig.tramita.jakina.ejiedes.net</stringProp>
+            <stringProp name="HTTPSampler.port">8080</stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">/r02yValidationWar/servlet/R02YGenerateToken</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.FILE_NAME"></stringProp>
+            <stringProp name="HTTPSampler.FILE_FIELD"></stringProp>
+            <stringProp name="HTTPSampler.mimetype"></stringProp>
+            <boolProp name="HTTPSampler.monitor">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          </HTTPSampler>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Aserción de Respuesta" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="835576100">&lt;elementos</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Extractor de Expresiones Regulares" enabled="false">
+              <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+              <stringProp name="RegexExtractor.refname">token_r02n_dos</stringProp>
+              <stringProp name="RegexExtractor.regex">(.*)(.*)</stringProp>
+              <stringProp name="RegexExtractor.template">$1$</stringProp>
+              <stringProp name="RegexExtractor.default"></stringProp>
+              <stringProp name="RegexExtractor.match_number">-1</stringProp>
+            </RegexExtractor>
+            <hashTree/>
+            <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="transformacionToken" enabled="true">
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <boolProp name="resetInterpreter">false</boolProp>
+              <stringProp name="script">String token =new String (prev.getResponseData() );
+
+token = token.replaceAll(&quot;&lt;&quot;, &quot;&amp;lt;&quot;);
+token = token.replaceAll(&quot;&gt;&quot;, &quot;&amp;gt;&quot;);
+
+vars.put(&quot;token_r02n&quot;, token);
+</stringProp>
+            </BeanShellPostProcessor>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="InitCapturaDatos" enabled="false">
+          <stringProp name="BeanShellSampler.query">import com.ejie.*;
+
+//Este script necesita tener en su classpath el fichero &quot;/r02s/r02s_aspect.properties&quot;
+PlateaMethodDAO dao = new PlateaMethodDAO();
+
+//Borramos todos los datos recogidos previamente por otras pruebas
+dao.clearAllDataTest();
+
+//Iniciamos la recogida de nuevos datos para la prueba de regresión
+dao.setTestEnabled(true);
+</stringProp>
+          <stringProp name="BeanShellSampler.filename"></stringProp>
+          <stringProp name="BeanShellSampler.parameters"></stringProp>
+          <boolProp name="BeanShellSampler.resetInterpreter">true</boolProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <WebServiceSampler guiclass="WebServiceSamplerGui" testclass="WebServiceSampler" testname="${methodName}-SD" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">www.mig.integracion.jakina.ejiedes.net</stringProp>
+          <stringProp name="HTTPSampler.port">8080</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.path">/$contextRoot/${uri}</stringProp>
+          <stringProp name="WebserviceSampler.wsdl_url">http://www.mig.integracion.jakina.ejiedes.net:8080/$contextRoot/${uri}?WSDL=</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <stringProp name="Soap.Action">http://www.openuri.org/${methodName}</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:open=&quot;http://www.openuri.org/&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;open:${methodName}&gt;
+         #foreach($param in $methodParams)
+         &lt;open:${param}&gt; --- &lt;/open:${param}&gt;
+         #end
+      &lt;/open:${methodName}&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="WebServiceSampler.xml_data_file"></stringProp>
+          <stringProp name="WebServiceSampler.xml_path_loc"></stringProp>
+          <stringProp name="WebserviceSampler.timeout"></stringProp>
+          <stringProp name="WebServiceSampler.memory_cache">true</stringProp>
+          <stringProp name="WebServiceSampler.read_response">true</stringProp>
+          <stringProp name="WebServiceSampler.use_proxy">false</stringProp>
+          <stringProp name="WebServiceSampler.proxy_host"></stringProp>
+          <stringProp name="WebServiceSampler.proxy_port"></stringProp>
+        </WebServiceSampler>
+        <hashTree>
+          <XMLAssertion guiclass="XMLAssertionGui" testclass="XMLAssertion" testname="Aserción XML" enabled="true"/>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Aserción de Respuesta" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="823011082">${methodName}Result</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor" enabled="true">
+            <boolProp name="resetInterpreter">true</boolProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+<stringProp name="script">import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+String data =&quot;&quot;;
+
+String soap =new String (prev.getResponseData() );
+
+String op = &quot;${methodName}Result&quot;;
+
+Pattern pattern = Pattern.compile(&quot;&lt;n(.):&quot;+op+&quot;[^&lt;&gt;]*&gt;&quot;); 
+Matcher matcher = pattern.matcher(soap); 
+String res =&quot;&quot;;
+if (matcher.find()) { 
+	res = matcher.group(0);
+	int inicio = soap.indexOf(res) + res.length();
+	int fin = soap.lastIndexOf( op+&quot;&gt;&quot;);
+	fin = soap.lastIndexOf( &quot;&lt;&quot;, fin);
+	data = soap.substring(inicio, fin);
+}
+
+data = data.replaceAll(&quot;&amp;lt;&quot;, &quot;&lt;&quot;);
+data = data.replaceAll(&quot;&amp;gt;&quot;, &quot;&gt;&quot;);
+
+vars.put(&quot;data1&quot;, data);
+</stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <WebServiceSampler guiclass="WebServiceSamplerGui" testclass="WebServiceSampler" testname="${methodName}-NSD" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">www.mig.tramita.jakina.ejiedes.net</stringProp>
+          <stringProp name="HTTPSampler.port">8080</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.path">/$contextRoot/${uri}</stringProp>
+          <stringProp name="WebserviceSampler.wsdl_url">http://www.mig.tramita.jakina.ejiedes.net:8080/$contextRoot/${uri}?WSDL</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <stringProp name="Soap.Action">http://www.openuri.org/${methodName}</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:open=&quot;http://www.openuri.org/&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;open:${methodName}&gt;
+         #foreach($paramName in $metodo.paramName())
+         &lt;open:$paramName&gt;  poner valor &lt;/open:$paramName&gt;
+         #end
+      &lt;/open:${methodName}&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;
+</stringProp>
+          <stringProp name="WebServiceSampler.xml_data_file"></stringProp>
+          <stringProp name="WebServiceSampler.xml_path_loc"></stringProp>
+          <stringProp name="WebserviceSampler.timeout"></stringProp>
+          <stringProp name="WebServiceSampler.memory_cache">true</stringProp>
+          <stringProp name="WebServiceSampler.read_response">true</stringProp>
+          <stringProp name="WebServiceSampler.use_proxy">false</stringProp>
+          <stringProp name="WebServiceSampler.proxy_host"></stringProp>
+          <stringProp name="WebServiceSampler.proxy_port"></stringProp>
+        </WebServiceSampler>
+        <hashTree>
+          <XMLAssertion guiclass="XMLAssertionGui" testclass="XMLAssertion" testname="Aserción XML" enabled="true"/>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Aserción de Respuesta" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="823011082">${methodName}Result</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor" enabled="true">
+            <boolProp name="resetInterpreter">true</boolProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+<stringProp name="script">import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+String data =&quot;&quot;;
+
+String soap =new String (prev.getResponseData() );
+
+String op = &quot;${methodName}Result&quot;;
+
+Pattern pattern = Pattern.compile(&quot;&lt;n(.):&quot;+op+&quot;[^&lt;&gt;]*&gt;&quot;); 
+Matcher matcher = pattern.matcher(soap); 
+String res =&quot;&quot;;
+if (matcher.find()) { 
+	res = matcher.group(0);
+	int inicio = soap.indexOf(res) + res.length();
+	int fin = soap.lastIndexOf( op+&quot;&gt;&quot;);
+	fin = soap.lastIndexOf( &quot;&lt;&quot;, fin);
+	data = soap.substring(inicio, fin);
+}
+
+data = data.replaceAll(&quot;&amp;lt;&quot;, &quot;&lt;&quot;);
+data = data.replaceAll(&quot;&amp;gt;&quot;, &quot;&gt;&quot;);
+
+vars.put(&quot;data2&quot;, data);
+</stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="EndAndCheckCapturaDatos" enabled="false">
+          <stringProp name="BeanShellSampler.query">import com.ejie.r02s.miscelanea.*;
+import com.ejie.*;
+import java.util.*;
+
+//Este script necesita tener en su classpath el fichero &quot;/r02s/r02s_aspect.properties&quot;
+PlateaMethodDAO dao = new PlateaMethodDAO();
+
+//Terminamos la recogida de datos de los EJB
+dao.setTestEnabled(false);
+
+//Recogemos todos los datos a comparar
+List params = dao.getAllDataTest();
+
+try {
+    //Obtenemos un array de pares a comparar. En caso de no tener todo pares se lanza una excepción
+    ArrayList paramsPairs = PlateaMethodUtil.getPairs(params);
+    
+    for (Iterator it = paramsPairs.iterator(); it.hasNext();) {
+        //Todo el proceso que vamos a hace a a ser por pares
+        PlateaMethod [] pair = (PlateaMethod[]) it.next();
+
+        //Limpiamos los datos de su token de sesión
+        PlateaMethodUtil.cleanSessionTokenParameter(pair);
+
+        //Transformamos a XMLBeans según se indique en el fichero de propiedades
+        PlateaMethodUtil.transformMethodParams(pair);
+        
+        //Una vez listo y preprados los datos pasamos a comparlos
+        R02SReflectionComparator rc =  R02SGoodies.getXmlBeansComparator(excep);
+        ResponseCode = rc.compare(pair[0], pair[1]);
+        
+        //Si nos encontramos con alguna diferencia, lanzamos una excepción que es recogida en el cathc y marcamos error
+        if (ResponseCode!=0) 
+            throw new RuntimeException (rc.toString());
+    }
+
+    //En caso de ir todo OK marcamos como error
+    ResponseMessage = &quot;OK&quot; ;
+    IsSuccess = true;
+} catch (Exception e) {
+    //En caso de cualquier error se recoge y se informa de comprobación no válida
+    ResponseMessage = &quot;Error en la comprobación de parámetros:&quot; + e.getMessage();
+    IsSuccess = false;
+    e.printStackTrace();
+}
+
+</stringProp>
+          <stringProp name="BeanShellSampler.filename"></stringProp>
+          <stringProp name="BeanShellSampler.parameters"></stringProp>
+          <boolProp name="BeanShellSampler.resetInterpreter">true</boolProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="ComparacionDatosWebServices" enabled="true">
+          <stringProp name="BeanShellSampler.query">import com.ejie.r02s.miscelanea.*;
+import com.bea.xml.*;
+
+String data1= (String)vars.get (&quot;data1&quot;);
+String data2= (String)vars.get (&quot;data2&quot;);
+
+//Para cada web services hay que cambiar el tipo de XMLBeans y el namespace
+XmlObject obj1 = R02SGoodies.createXmlObject (data1, &quot;com.ejie.cp.xml.DocumentListDocument&quot;, &quot;${uri}p/xml&quot;);
+XmlObject obj2 = R02SGoodies.createXmlObject (data2, &quot;com.ejie.cp.xml.DocumentListDocument&quot;, &quot;${uri}p/xml&quot;);
+
+//En caso de existir excepciones en la comparación se puede añadir en el método getXmlBeansComparator; está sobrecargado
+R02SReflectionComparator rc2 =  R02SGoodies.getXmlBeansComparator();
+
+ResponseCode = rc2.compare(obj1, obj2);
+if (ResponseCode==0) {
+    ResponseMessage = &quot;OK&quot; ;
+    IsSuccess = true;
+} else {
+    ResponseMessage = rc2.toString();
+    IsSuccess = false;
+}
+
+</stringProp>
+          <stringProp name="BeanShellSampler.filename"></stringProp>
+          <stringProp name="BeanShellSampler.parameters"></stringProp>
+          <boolProp name="BeanShellSampler.resetInterpreter">true</boolProp>
+        </BeanShellSampler>
+        <hashTree/>
+      </hashTree>
+      #end      
+      <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="Ver Resultados en Árbol" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>true</xml>
+            <fieldNames>false</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>true</xml>
+            <fieldNames>false</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+          </value>
+        </objProp>
+        <stringProp name="filename">./resultados/${serviceName}.txt</stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Ver Árbol de Resultados" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>true</xml>
+            <fieldNames>false</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

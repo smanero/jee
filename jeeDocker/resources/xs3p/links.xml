@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<links xmlns="http://titanium.dstc.edu.au/xml/xs3p">
+	<schema file-location="X43ArchivoDigitalWS.xsd" docfile-location="X43ArchivoDigitalWS.html"/>
+	<schema file-location="X43FCPWS.xsd" docfile-location="X43FCPWS.html"/>
+	<schema file-location="X43IdSFirmasDocsWS.xsd" docfile-location="X43IdSFirmasDocsWS.html"/>
+	<schema file-location="X43NoraWS.xsd" docfile-location="X43NoraWS.html"/>
+	<schema file-location="X43OceWS.xsd" docfile-location="X43OceWS.html"/>
+	<schema file-location="X43PinWS.xsd" docfile-location="X43PinWS.html"/>
+	<schema file-location="X43PntWS.xsd" docfile-location="X43PntWS.html"/>
+	<schema file-location="X43RegistroWS.xsd" docfile-location="X43RegistroWS.html"/>
+	<schema file-location="X43ShnWS.xsd" docfile-location="X43ShnWS.html"/>
+	<schema file-location="X43UtilesWS.xsd" docfile-location="X43UtilesWS.html"/>
+	<schema file-location="X43VdCWS.xsd" docfile-location="X43VdCWS.html"/>
+	
+	<schema file-location="X43ArchivoDigitalWSP.xsd" docfile-location="X43ArchivoDigitalWSP.html"/>
+	<schema file-location="X43FCPWSP.xsd" docfile-location="X43FCPWSP.html"/>
+	<schema file-location="X43IdSFirmasDocsWSP.xsd" docfile-location="X43IdSFirmasDocsWSP.html"/>
+	<schema file-location="X43InteropRAGWSP.xsd" docfile-location="X43InteropRAGWSP.html"/>
+	<schema file-location="X43PntWSP.xsd" docfile-location="X43PntWSP.html"/>
+	<schema file-location="X43ShnWSP.xsd" docfile-location="X43ShnWSP.html"/>
+	<schema file-location="X43VdCWSP.xsd" docfile-location="X43VdCWSP.html"/>
+
+	<schema file-location="x43sArchivoDigital.xsd" docfile-location="x43sArchivoDigital.html"/>
+	<schema file-location="x43sFCP.xsd" docfile-location="x43sFCP.html"/>
+	<schema file-location="X43IdSFirmasDocs.xsd" docfile-location="X43IdSFirmasDocs.html"/>
+	<schema file-location="x43sNora.xsd" docfile-location="x43sNora.html"/>
+	<schema file-location="x43sOce.xsd" docfile-location="x43sOce.html"/>
+	<schema file-location="x43sPnt.xsd" docfile-location="x43sPnt.html"/>
+	<schema file-location="x43sRegistro.xsd" docfile-location="x43sRegistro.html"/>
+	<schema file-location="x43sShn.xsd" docfile-location="x43sShn.html"/>
+	<schema file-location="x43sTypes.xsd" docfile-location="x43sTypes.html"/>
+	<schema file-location="x43sVdC.xsd" docfile-location="x43sVdC.html"/>
+</links>

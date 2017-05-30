@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." name="alta-osb">
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+	  <classpath>
+		<pathelement location="D:/usr/apache-ant-1.9.2/ext/ant-contrib/ant-contrib-1.0b3.jar"/>
+	  </classpath>
+	</taskdef>
+
+	<property name="doc.path" value="D:/eadmin/trunk/platea_ot/PcdmJ2eeDoc/genDoc" />
+	<property name="file.template" value="Servicios_ERPI-Solicitud_Exposicion_Servicio_WSNAME" />
+	
+	<scriptdef name="split" language="javascript">
+		<attribute name="value"/>
+		<attribute name="delimiter"/>
+		<![CDATA[
+			 values = attributes.get("value").split(attributes.get("delimiter"));
+			 project.setProperty("field0", values[0]);
+			 project.setProperty("field1", values[1]);
+			 project.setProperty("field2", values[2]);
+		 ]]>
+	</scriptdef>
+	
+	<scriptdef name="setsfx" language="javascript">
+		<attribute name="se"/>
+		<attribute name="sw"/>
+		<![CDATA[
+			 project.setProperty("se", attributes.get("se"));
+			 project.setProperty("sw", attributes.get("sw"));
+		 ]]>
+	</scriptdef>
+	
+	<scriptdef name="setwsxsd" language="javascript">
+		<attribute name="xxx"/>
+		<![CDATA[
+		// append xsd del ws
+		wsxsdP = attributes.get("xxx");
+		if (null != project.getProperty("wsxsdF")) {
+			wsxsdP = project.getProperty("wsxsdF") + " " + wsxsdP;
+	    }
+		project.setProperty("wsxsdF", wsxsdP );
+		// create echo Task via Ant API
+		echo = project.createTask("echo");
+		echo.setMessage( project.getProperty("wsxsdF") );
+        echo.perform();
+		]]>
+	</scriptdef>
+	
+	<scriptdef name="cleanwsxsd" language="javascript">
+		<attribute name="xxx"/>
+		<![CDATA[
+		project.setProperty("wsxsdF", "" );
+		]]>
+	</scriptdef>
+	
+	
+	<target name="clean">
+		<delete dir="${doc.path}/DES" includes="*.doc" />
+		<delete dir="${doc.path}/DES_sb" includes="*.doc" />
+		<delete dir="${doc.path}/PRU" includes="*.doc" />
+		<delete dir="${doc.path}/PRU_sb" includes="*.doc" />
+		<delete dir="${doc.path}/PRD" includes="*.doc" />
+	</target>
+	
+	<target name="gen-erpiform-x43ws" depends="clean">
+		<loadfile property="x43ws-list" srcFile="${doc.path}/x43ws-list.csv"/>
+		<for list="${x43ws-list}" param="x43ws-data" delimiter="${line.separator}" >
+		<sequential>
+			<echo>*****************************************************************</echo>
+			<echo>@{x43ws-data}</echo>
+			
+			<split value="@{x43ws-data}" delimiter=";" />
+			
+			<setsfx se="DES" sw="_sb" />
+			<gen-erpiform sfxenv="${se}" sfxws="${sw}" wsname="${field0}" wscr="${field1}" wsxsd="${field2}" wsep1="http://wl11vf0049.ejiedes.net:7001" wsep2="http://wl11vf0050.ejiedes.net:7001" />
+			<setsfx se="DES" sw="" />
+			<gen-erpiform sfxenv="${se}" sfxws="${sw}" wsname="${field0}" wscr="${field1}" wsxsd="${field2}" wsep1="http://wl11vf0037.ejiedes.net:7001" wsep2="http://wl11vf0038.ejiedes.net:7001" />
+			<setsfx se="PRU" sw="_sb" />
+			<gen-erpiform sfxenv="${se}" sfxws="${sw}" wsname="${field0}" wscr="${field1}" wsxsd="${field2}" wsep1="http://wl11vf0025.ejiepru.net:7001" wsep2="http://wl11vf0027.ejiepru.net:7001" />
+			<setsfx se="PRU" sw="" />
+			<gen-erpiform sfxenv="${se}" sfxws="${sw}" wsname="${field0}" wscr="${field1}" wsxsd="${field2}" wsep1="http://wl11vf0047.ejiepru.net:7001" wsep2="http://wl11vf0049.ejiepru.net:7001" />
+			<setsfx se="PRD" sw="" />
+			<gen-erpiform sfxenv="${se}" sfxws="${sw}" wsname="${field0}" wscr="${field1}" wsxsd="${field2}" wsep1="http://wl11vf0041.ejgvdns:7001" wsep2="http://wl11vf0043.ejgvdns:7001" />
+		</sequential>
+		</for>
+	</target>
+
+	<macrodef name="gen-erpiform">
+		<attribute name="sfxenv" />
+		<attribute name="sfxws" />
+		<attribute name="wsname" />
+		<attribute name="wscr" />
+		<attribute name="wsxsd" />
+		<attribute name="wsep1" />
+		<attribute name="wsep2" />
+		<sequential>
+			<echo>@{wsname} -> @{wsep1} | @{wsep2}</echo>
+			
+			<for list="@{wsxsd}" param="letter">  
+				<sequential>
+					<setwsxsd xxx="@{wsep2}/@{wscr}?xsd=@{letter}" />
+				</sequential>  
+			</for> 
+			
+			<copy todir="${doc.path}/out/@{sfxenv}@{sfxws}" overwrite="true" encoding="UTF-8">
+				<fileset file="${doc.path}/${file.template}-@{sfxenv}-2003.xml" />
+				<mapper type="regexp" from="^(.*)WSNAME.*$" to="\1@{wsname}.doc" />
+				<filterset recurse="false">
+					<filter token="WSNAME" value="@{wsname}@{sfxws}" />
+					<filter token="ENDPOINT1" value="@{wsep1}/@{wscr}" />
+					<filter token="ENDPOINT2" value="@{wsep2}/@{wscr}" />
+					<filter token="WSWSDL" value="@{wsep2}/@{wscr}?WSDL" />
+					<filter token="WSXSD" value="${wsxsdF}" />
+				</filterset>
+			</copy>
+			<cleanwsxsd />
+			<echo>${doc.path}/${file.template}-@{sfxenv}.xml"</echo>
+			<echo>@{wsname}@{sfxws} 4 ${doc.path}/@{sfxenv}@{sfxws} DONE!</echo>
+			<echo>=================================================================</echo>
+		</sequential>
+	</macrodef>
+</project>
+

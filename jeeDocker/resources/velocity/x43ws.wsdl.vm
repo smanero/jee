@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:conv="http://www.openuri.org/2002/04/soap/conversation/"
+   xmlns:cw="http://www.openuri.org/2002/04/wsdl/conversation/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+   xmlns:jms="http://www.openuri.org/2002/04/wsdl/jms/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+   xmlns:wi="${namespace}" targetNamespace="${namespace}" 
+   xmlns:wt="${namespace}/xml"
+>
+   <!-- types -->
+   <types>
+      <xs:schema xmlns="http://www.w3.org/2001/XMLSchema">
+         <xs:import namespace="${namespace}/xml" schemaLocation="${service}.xsd" />     
+      </xs:schema>  
+    </types>
+
+   <!-- message -->
+   #foreach($operation in $operations)
+   <message name="${operation}SoapIn">
+      <part name="parameters" element="wt:${operation}" />
+   </message>
+   <message name="${operation}SoapOut">
+      <part name="parameters" element="wt:${operation}Response" />
+   </message>
+   #end
+
+   <!-- port-type -->
+   <portType name="${service}PortType">
+   #foreach($operation in $operations)
+   <operation name="${operation}">
+      <input message="wi:${operation}SoapIn" />
+      <output message="wi:${operation}SoapOut" />
+   </operation>
+   #end
+   </portType>
+
+   <!-- binding -->
+   <binding name="${service}SoapHttp" type="wi:${service}PortType">
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+      #foreach($operation in $operations)
+      <operation name="${operation}">
+         <soap:operation soapAction="${namespace}/${operation}" />
+         <input>
+            <soap:body use="literal" />
+         </input>
+         <output>
+            <soap:body use="literal" />
+         </output>
+      </operation>
+      #end      
+   </binding>
+
+   <!-- service -->
+   <service name="${service}">
+      <port name="${service}Port" binding="wi:${service}SoapHttp">
+         <soap:address location="http://www.tramita.jakina.ejgvdns/${service}" />
+      </port>
+   </service>
+</definitions>

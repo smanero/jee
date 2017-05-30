@@ -1,0 +1,60 @@
+<project name="x43s-xs3p" default="all" basedir=".">
+	<description>Script to generate documentation for example schema files using Ant.</description>
+
+	<property name="original-loc" value="D:/eadmin/dev/platea_ot/PcdmJ2eeDoc/xs3p"/>
+	<property name="xslt-file" value="${original-loc}/xs3p.xsl"/>
+	<property name="dest-dir" value="D:/tmp/x43s-xs3p-report"/>
+	<property name="target-dir" value="D:/eadmin/dev/aplic/x43s/aplic"/>
+	
+	<property name="original-loc" value="D:/eadmin/dev/platea_ot/PcdmJ2eeDoc/xs3p"/>
+
+	<target name="all" description="Generates documentation for all *.xsd files.">
+      <delete dir="${dest-dir}"/>
+  
+      <xslt basedir="${target-dir}" destdir="${dest-dir}"
+       extension=".html" style="${xslt-file}">
+         <include name="**/src/wsdls/*.xsd"/>
+		 <param name="searchImportedSchemas" expression="false"/>
+         <param name="searchIncludedSchemas" expression="false"/>
+         <param name="linksFile" expression="links.xml"/>
+      </xslt>
+	</target>
+	
+	<target name="all-x43k" description="Generates documentation for all *.xsd files.">
+      <delete dir="D:/tmp/x43k-xs3p-report"/>
+      <xslt basedir="D:/eadmin/dev/aplic/x43k/aplic/x43kEARClasses/src/com/ejie/x43k/xsd" destdir="D:/tmp/x43k-xs3p-report"
+       extension=".html" style="${xslt-file}">
+         <include name="*.xsd"/>
+		 <param name="searchImportedSchemas" expression="false"/>
+         <param name="searchIncludedSchemas" expression="false"/>
+         <param name="linksFile" expression="links-x43k.xml"/>
+      </xslt>
+	</target>	
+
+	<target name="test-external-links" description="Test linking between schema files.">
+      <!-- Copy xslt file to local dir
+      <copy file="${original-loc}/${xslt-file}" todir="${basedir}"/>
+	   -->
+      <xslt in="address.xsd" out="${dest-dir}/address.xsd.html" style="${xslt-file}">
+         <param name="searchImportedSchemas" expression="true"/>
+         <param name="searchIncludedSchemas" expression="true"/>
+         <param name="linksFile" expression="links.xml"/>
+      </xslt>
+      <!-- ipo.xsd -->
+      <xslt in="ipo.xsd" out="${dest-dir}/ipo.xsd.html" style="${xslt-file}">
+         <param name="searchImportedSchemas" expression="true"/>
+         <param name="searchIncludedSchemas" expression="true"/>
+         <param name="linksFile" expression="links.xml"/>
+      </xslt>
+      <!-- report.xsd -->
+      <xslt in="report.xsd" out="${dest-dir}/report.xsd.html" style="${xslt-file}">
+         <param name="searchImportedSchemas" expression="true"/>
+         <param name="searchIncludedSchemas" expression="true"/>
+         <param name="linksFile" expression="links.xml"/>
+      </xslt>
+      <!-- Delete local copy of xslt file
+      <delete file="${basedir}/${xslt-file}"/>
+	  -->
+	</target>
+
+</project>
