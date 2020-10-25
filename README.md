@@ -1,7 +1,7 @@
 jee projects repo
 ====================
 
- Repo with different proof fo concept
+ Repo with different proofs of concept in different topics, mostly documentation of java projects "automatically" generated.
 
 ![TEST](http://test)
 
