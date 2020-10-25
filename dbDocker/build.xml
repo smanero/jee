@@ -49,7 +49,7 @@
 			<arg value="jdbc:oracle:thin:@ejhp67:1524:ede2" />
 			<arg value="H" />
 			<arg value="true" />
-			<arg value="D:/tmp" />
+			<arg value="/tmp" />
 		</java>
 	</target>
 </project>
