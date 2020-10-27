@@ -2,11 +2,11 @@
 package nl.siegmann.epublib.util;
 
 import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URISyntaxException;
+//import java.io.IOException;
+//import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.logging.Level;
-import nl.siegmann.epublib.viewer.ContentPane;
+//import java.util.logging.Level;
+//import nl.siegmann.epublib.viewer.ContentPane;
 
 public class DesktopUtil {
     
@@ -29,8 +29,9 @@ public class DesktopUtil {
     }
     
     public static class BrowserLaunchException extends Exception {
+		private static final long serialVersionUID = 1L;
 
-        private BrowserLaunchException(String message, Throwable cause) {
+		private BrowserLaunchException(String message, Throwable cause) {
             super(message, cause);
         }
         

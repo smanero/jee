@@ -33,10 +33,8 @@ public class SectionTitleBookProcessor implements BookProcessor {
 				String title = getTitle(tocReference, book, xpath);
 				tocReference.setTitle(title);
 			} catch (XPathExpressionException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

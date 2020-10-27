@@ -220,7 +220,7 @@ public class PackageDocumentReader extends PackageDocumentBase {
 			Element spineItem = (Element) spineNodes.item(i);
 			String itemref = DOMUtil.getAttribute(spineItem, NAMESPACE_OPF, OPFAttributes.idref);
 			if(StringUtil.isBlank(itemref)) {
-				log.error("itemref with missing or empty idref"); // XXX
+				log.error("itemref with missing or empty idref");
 				continue;
 			}
 			String id = idMapping.get(itemref);

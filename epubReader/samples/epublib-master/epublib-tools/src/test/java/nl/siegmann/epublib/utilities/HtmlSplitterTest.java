@@ -34,7 +34,6 @@ public class HtmlSplitterTest extends TestCase {
 				assertTrue(data.length <= maxSize);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -52,7 +52,6 @@ public class PackageDocumentWriter extends PackageDocumentBase {
 			serializer.endDocument();
 			serializer.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

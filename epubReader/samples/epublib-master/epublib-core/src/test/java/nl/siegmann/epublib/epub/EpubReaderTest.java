@@ -22,7 +22,6 @@ public class EpubReaderTest extends TestCase {
 			Book readBook = new EpubReader().readEpub(new ByteArrayInputStream(epubData));
 			assertNotNull(readBook.getCoverImage());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			assertTrue(false);
 		}
@@ -45,7 +44,6 @@ public class EpubReaderTest extends TestCase {
 			assertEquals(1, readBook.getSpine().size());
 			assertEquals(1, readBook.getTableOfContents().size());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			assertTrue(false);
 		}
@@ -70,7 +68,6 @@ public class EpubReaderTest extends TestCase {
 			assertNotNull(readBook.getNcxResource());
 			assertEquals(MediatypeService.NCX, readBook.getNcxResource().getMediaType());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			assertTrue(false);
 		}

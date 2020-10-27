@@ -46,7 +46,6 @@ public class EpubWriterTest extends TestCase {
 			assertEquals(4, readBook.getTableOfContents().size());
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -144,10 +143,8 @@ public class EpubWriterTest extends TestCase {
 //	        try {
 //	            writer.write(book, output);
 //	        } catch (XMLStreamException e) {
-//	            // TODO Auto-generated catch block
 //	            e.printStackTrace();
 //	        } catch (FactoryConfigurationError e) {
-//	            // TODO Auto-generated catch block
 //	            e.printStackTrace();
 //	        }
 //	    }

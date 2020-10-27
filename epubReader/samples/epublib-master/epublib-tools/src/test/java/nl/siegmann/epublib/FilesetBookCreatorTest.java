@@ -1,7 +1,7 @@
 package nl.siegmann.epublib;
 
 import junit.framework.TestCase;
-import nl.siegmann.epublib.Constants;
+//import nl.siegmann.epublib.Constants;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.fileset.FilesetBookCreator;
 

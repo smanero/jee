@@ -13,8 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
+//import javax.swing.table.AbstractTableModel;
+//import javax.swing.table.TableModel;
 
 import nl.siegmann.epublib.browsersupport.NavigationEvent;
 import nl.siegmann.epublib.browsersupport.NavigationEventListener;
@@ -120,18 +120,18 @@ public class MetadataPane extends JPanel implements NavigationEventListener {
 
 	}
 	
+	/*
 	private TableModel createTableModel(Navigator navigator) {
 		return new AbstractTableModel() {
-			
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public Object getValueAt(int rowIndex, int columnIndex) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 			
 			@Override
 			public int getRowCount() {
-				// TODO Auto-generated method stub
 				return 0;
 			}
 			
@@ -141,6 +141,7 @@ public class MetadataPane extends JPanel implements NavigationEventListener {
 			}
 		};
 	}
+	*/
 
 	@Override
 	public void navigationPerformed(NavigationEvent navigationEvent) {

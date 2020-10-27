@@ -1,31 +1,31 @@
 package nl.siegmann.epublib.util;
 
-import java.io.File;
-import java.io.FileInputStream;
+//import java.io.File;
+//import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+//import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+//import java.util.zip.ZipEntry;
+//import java.util.zip.ZipInputStream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
+//import javax.xml.parsers.DocumentBuilder;
+//import javax.xml.parsers.ParserConfigurationException;
 
-import nl.siegmann.epublib.Constants;
-import nl.siegmann.epublib.domain.MediaType;
+//import nl.siegmann.epublib.Constants;
+//import nl.siegmann.epublib.domain.MediaType;
 import nl.siegmann.epublib.domain.Resource;
-import nl.siegmann.epublib.epub.EpubProcessorSupport;
+//import nl.siegmann.epublib.epub.EpubProcessorSupport;
 import nl.siegmann.epublib.service.MediatypeService;
 
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+//import org.w3c.dom.Document;
+//import org.xml.sax.InputSource;
+//import org.xml.sax.SAXException;
 
 /**
  * Various resource utility methods
@@ -71,9 +71,10 @@ public class ToolsResourceUtil {
 		}
 		Pattern h_tag = Pattern.compile("^h\\d\\s*", Pattern.CASE_INSENSITIVE);
 		String title = null;
+		Scanner scanner = null;
 		try {
 			Reader content = resource.getReader();
-			Scanner scanner = new Scanner(content);
+			scanner = new Scanner(content);
 			scanner.useDelimiter("<");
 			while(scanner.hasNext()) {
 				String text = scanner.next();
@@ -89,6 +90,10 @@ public class ToolsResourceUtil {
 			}
 		} catch (IOException e) {
 			log.error(e.getMessage());
+		} finally {
+			if (null != scanner) {
+				scanner.close();
+			}
 		}
 		resource.setTitle(title);
 		return title;

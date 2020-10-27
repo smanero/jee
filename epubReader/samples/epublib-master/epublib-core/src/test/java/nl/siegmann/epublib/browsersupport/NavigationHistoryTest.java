@@ -14,6 +14,8 @@ public class NavigationHistoryTest extends TestCase {
 	private static final Resource mockResource = new Resource("mockResource.html");
 	
 	private static class MockBook extends Book {
+		private static final long serialVersionUID = -7440326870013420693L;
+
 		public Resource getCoverPage() {
 			return mockResource;
 		}
@@ -21,6 +23,7 @@ public class NavigationHistoryTest extends TestCase {
 	
 	
 	private static class MockSectionWalker extends Navigator {
+		private static final long serialVersionUID = -2807977674658864531L;
 		
 		private Map<String, Resource> resourcesByHref = new HashMap<String, Resource>();
 

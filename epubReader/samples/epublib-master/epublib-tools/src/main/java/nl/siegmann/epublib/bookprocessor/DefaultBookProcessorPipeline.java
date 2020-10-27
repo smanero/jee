@@ -7,9 +7,6 @@ import java.util.List;
 import nl.siegmann.epublib.epub.BookProcessor;
 import nl.siegmann.epublib.epub.BookProcessorPipeline;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A book processor that combines several other bookprocessors
  * 
@@ -20,8 +17,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class DefaultBookProcessorPipeline extends BookProcessorPipeline {
-
-	private Logger log = LoggerFactory.getLogger(DefaultBookProcessorPipeline.class);
 
 	public DefaultBookProcessorPipeline() {
 		super(createDefaultBookProcessors());

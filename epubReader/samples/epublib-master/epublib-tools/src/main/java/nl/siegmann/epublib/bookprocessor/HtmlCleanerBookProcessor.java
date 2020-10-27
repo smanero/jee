@@ -8,7 +8,6 @@ import java.io.Writer;
 import nl.siegmann.epublib.Constants;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.Resource;
-import nl.siegmann.epublib.epub.BookProcessor;
 import nl.siegmann.epublib.util.NoCloseWriter;
 
 import org.htmlcleaner.CleanerProperties;
@@ -25,8 +24,7 @@ import org.slf4j.LoggerFactory;
  * @author paul
  * 
  */
-public class HtmlCleanerBookProcessor extends HtmlBookProcessor implements
-		BookProcessor {
+public class HtmlCleanerBookProcessor extends HtmlBookProcessor {
 
 	@SuppressWarnings("unused")
 	private final static Logger log = LoggerFactory.getLogger(HtmlCleanerBookProcessor.class);
@@ -61,11 +59,14 @@ public class HtmlCleanerBookProcessor extends HtmlBookProcessor implements
 		// write result to output
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Writer writer = new OutputStreamWriter(out, outputEncoding);
-		writer = new NoCloseWriter(writer);
-		EpublibXmlSerializer xmlSerializer = new EpublibXmlSerializer(htmlCleaner.getProperties(), outputEncoding);
-		xmlSerializer.write(node, writer, outputEncoding);
-		writer.flush();
-		
+		try {
+			writer = new NoCloseWriter(writer);
+			EpublibXmlSerializer xmlSerializer = new EpublibXmlSerializer(htmlCleaner.getProperties(), outputEncoding);
+			xmlSerializer.write(node, writer, outputEncoding);
+			writer.flush();
+		} finally {
+			writer.close();
+		}
 		return out.toByteArray();
 	}
 	

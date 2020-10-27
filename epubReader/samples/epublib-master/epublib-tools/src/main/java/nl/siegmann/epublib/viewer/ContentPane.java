@@ -59,14 +59,12 @@ public class ContentPane extends JPanel implements NavigationEventListener,
 			
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
+				// no hacer nada				
 			}
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
+				// no hacer nada				
 			}
 			
 			@Override
@@ -214,12 +212,12 @@ public class ContentPane extends JPanel implements NavigationEventListener,
 
 			@Override
 			public void keyTyped(KeyEvent keyEvent) {
+				// no hacer nada
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-
+				// no hacer nada
 			}
 
 			@Override

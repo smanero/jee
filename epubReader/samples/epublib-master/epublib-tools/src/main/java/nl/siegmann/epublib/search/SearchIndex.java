@@ -135,6 +135,7 @@ public class SearchIndex {
 			chunk = cleanText(chunk);
 			result.append(chunk);
 		}
+		scanner.close();
 		return result.toString();
 	}
 	

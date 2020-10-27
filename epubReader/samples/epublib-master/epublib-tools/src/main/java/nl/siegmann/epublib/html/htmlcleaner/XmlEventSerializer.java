@@ -91,8 +91,8 @@ public class XmlEventSerializer implements XMLEventReader {
     	} else {
 	    	serializeOpenTag(tagNode, writer);
 	
-	        List tagChildren = tagNode.getChildren();
-	        for(Iterator childrenIt = tagChildren.iterator(); childrenIt.hasNext(); ) {
+	        List<Object> tagChildren = tagNode.getChildren();
+	        for(Iterator<Object> childrenIt = tagChildren.iterator(); childrenIt.hasNext(); ) {
 	            Object item = childrenIt.next();
 	            if (item != null) {
 	            	serializeToken(item, writer);
@@ -118,63 +118,54 @@ public class XmlEventSerializer implements XMLEventReader {
 
 	@Override
 	public void close() throws XMLStreamException {
-		// TODO Auto-generated method stub
-		
+		// No hace nada
 	}
 
 
 	@Override
 	public String getElementText() throws XMLStreamException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public Object getProperty(String name) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 
 	@Override
 	public XMLEvent nextEvent() throws XMLStreamException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public XMLEvent nextTag() throws XMLStreamException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public XMLEvent peek() throws XMLStreamException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public Object next() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-		
+		// no hace nada		
 	}	
 }

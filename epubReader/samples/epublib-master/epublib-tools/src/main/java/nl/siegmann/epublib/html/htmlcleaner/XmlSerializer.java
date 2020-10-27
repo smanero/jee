@@ -48,9 +48,9 @@ public class XmlSerializer {
         String tagName = tagNode.getName();
         
         writer.writeStartElement(tagName);
-        Map tagAtttributes = tagNode.getAttributes();
-        for(Iterator it = tagAtttributes.entrySet().iterator();it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
+        Map<String, String> tagAtttributes = tagNode.getAttributes();
+        for(Iterator<Map.Entry<String, String>> it = tagAtttributes.entrySet().iterator();it.hasNext();) {
+            Map.Entry<String, String> entry = it.next();
             String attName = (String) entry.getKey();
             String attValue = (String) entry.getValue();
             
@@ -65,9 +65,9 @@ public class XmlSerializer {
         String tagName = tagNode.getName();
         
         writer.writeEmptyElement(tagName);
-        Map tagAtttributes = tagNode.getAttributes();
-        for(Iterator it = tagAtttributes.entrySet().iterator();it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
+        Map<String, String> tagAtttributes = tagNode.getAttributes();
+        for(Iterator<Map.Entry<String, String>> it = tagAtttributes.entrySet().iterator();it.hasNext();) {
+            Map.Entry<String, String> entry = it.next();
             String attName = (String) entry.getKey();
             String attValue = (String) entry.getValue();
             
@@ -89,8 +89,8 @@ public class XmlSerializer {
     	} else {
 	    	serializeOpenTag(tagNode, writer);
 	
-	        List tagChildren = tagNode.getChildren();
-	        for(Iterator childrenIt = tagChildren.iterator(); childrenIt.hasNext(); ) {
+	        List<Object> tagChildren = tagNode.getChildren();
+	        for(Iterator<Object> childrenIt = tagChildren.iterator(); childrenIt.hasNext(); ) {
 	            Object item = childrenIt.next();
 	            if (item != null) {
 	            	serializeToken(item, writer);

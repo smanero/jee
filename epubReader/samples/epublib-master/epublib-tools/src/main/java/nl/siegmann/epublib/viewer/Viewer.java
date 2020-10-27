@@ -12,7 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
+//import java.util.Collections;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -25,11 +25,11 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import nl.siegmann.epublib.browsersupport.NavigationHistory;
+//import nl.siegmann.epublib.browsersupport.NavigationHistory;
 import nl.siegmann.epublib.browsersupport.Navigator;
 import nl.siegmann.epublib.domain.Book;
-import nl.siegmann.epublib.epub.BookProcessor;
-import nl.siegmann.epublib.epub.BookProcessorPipeline;
+//import nl.siegmann.epublib.epub.BookProcessor;
+//import nl.siegmann.epublib.epub.BookProcessorPipeline;
 import nl.siegmann.epublib.epub.EpubReader;
 import nl.siegmann.epublib.epub.EpubWriter;
 
@@ -47,8 +47,8 @@ public class Viewer {
 	private JSplitPane leftSplitPane;
 	private JSplitPane rightSplitPane;
 	private Navigator navigator = new Navigator();
-	private NavigationHistory browserHistory;
-	private BookProcessorPipeline epubCleaner = new BookProcessorPipeline(Collections.<BookProcessor>emptyList());
+	//private NavigationHistory browserHistory;
+	//private BookProcessorPipeline epubCleaner = new BookProcessorPipeline(Collections.<BookProcessor>emptyList());
 	
 	public Viewer(InputStream bookStream) {
 		mainWindow = createMainWindow();
@@ -271,12 +271,13 @@ public class Viewer {
 		Content
 	}
 
+	/*
 	private class LayoutX {
 		private boolean tocPaneVisible;
 		private boolean contentPaneVisible;
 		private boolean metaPaneVisible;
-		
 	}
+	*/
 	private void setLayout(Layout layout) {
 		switch (layout) {
 			case Content:
